@@ -1,0 +1,3535 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIKYA – Peer-to-Peer Student Skill Exchange Platform</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              DEFAULT: '#4F46E5',
+              light: '#6366F1',
+              dark: '#3730A3',
+              50: '#EEF2FF',
+              100: '#E0E7FF'
+            },
+            secondary: {
+              DEFAULT: '#0EA5E9',
+              light: '#38BDF8',
+              dark: '#0284C7',
+              50: '#F0F9FF'
+            },
+            amberBrand: {
+              DEFAULT: '#F59E0B',
+              light: '#FBBF24',
+              50: '#FFFBEB'
+            },
+            aikyaDark: '#0F172A',
+            aikyaBg: '#F6F9FD'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #F6F9FD;
+      color: #0F172A;
+    }
+
+    /* Modern Frosted Glass Effects */
+    .glass-nav {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    }
+    
+    .glass-card {
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 10px 30px -5px rgba(79, 70, 229, 0.06), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .glass-card:hover {
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 20px 35px -8px rgba(79, 70, 229, 0.12), 0 6px 15px -3px rgba(15, 23, 42, 0.04);
+      border-color: rgba(99, 102, 241, 0.35);
+      transform: translateY(-2px);
+    }
+
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+    }
+
+    .glass-dark {
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .floating-card-1 {
+      animation: floatA 6s ease-in-out infinite;
+    }
+    .floating-card-2 {
+      animation: floatB 7s ease-in-out infinite 1.5s;
+    }
+
+    @keyframes floatA {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+    @keyframes floatB {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(10px); }
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col antialiased selection:bg-brand selection:text-white relative bg-[#F6F9FD] overflow-x-hidden">
+
+  <!-- Ambient Glowing Mesh Orbs (Refracts through frosted glass) -->
+  <div class="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+    <div class="absolute -top-32 -left-32 w-[34rem] h-[34rem] bg-gradient-to-br from-brand-light/20 to-brand/10 rounded-full blur-3xl"></div>
+    <div class="absolute top-1/4 -right-32 w-[32rem] h-[32rem] bg-gradient-to-bl from-secondary/20 to-cyan-300/10 rounded-full blur-3xl"></div>
+    <div class="absolute top-2/3 left-1/4 w-[36rem] h-[36rem] bg-gradient-to-tr from-indigo-200/20 to-secondary-50/20 rounded-full blur-3xl"></div>
+  </div>
+
+  <!-- Toast Notification Stack -->
+  <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
+
+  <!-- Sticky Frosted Header -->
+  <header class="sticky top-0 z-40 glass-nav shadow-xs">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 gap-2 sm:gap-4">
+        
+        <!-- Logo & Brand (Shrink-protected) -->
+        <div class="flex items-center gap-2.5 sm:gap-3 cursor-pointer shrink-0" onclick="navigateTo('landing')">
+          <img src="image_d8ddcf.jpg" alt="AIKYA Logo" class="w-9 h-9 rounded-xl object-cover ring-1 ring-slate-200/80 shadow-xs bg-white shrink-0" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=AIKYA&background=4F46E5&color=ffffff&bold=true';">
+          <div class="flex items-center">
+            <span class="text-lg sm:text-xl font-black tracking-tight bg-gradient-to-r from-slate-950 via-slate-900 to-brand-dark bg-clip-text text-transparent">AIKYA</span>
+            <span class="text-[10px] text-slate-400 font-semibold hidden 2xl:inline-block ml-2">• Different People, One Network</span>
+          </div>
+        </div>
+
+        <!-- Desktop Navigation Bar -->
+        <nav class="hidden xl:flex items-center space-x-1 text-xs 2xl:text-sm font-semibold text-slate-600 shrink-0">
+          <button onclick="navigateTo('landing')" class="nav-btn px-3 py-1.5 rounded-xl hover:text-brand hover:bg-brand-50/80 transition" data-target="landing">Home</button>
+          <button onclick="navigateTo('explore')" class="nav-btn px-3 py-1.5 rounded-xl hover:text-brand hover:bg-brand-50/80 transition" data-target="explore">Explore Skills</button>
+          <button onclick="navigateTo('exchange')" class="nav-btn px-3 py-1.5 rounded-xl hover:text-brand hover:bg-brand-50/80 transition flex items-center gap-1.5" data-target="exchange">
+            <span>Skill Exchange</span>
+            <span class="px-1.5 py-0.2 bg-emerald-100 text-emerald-800 text-[9px] font-bold rounded-full">MATCH</span>
+          </button>
+          <button onclick="navigateTo('showcase')" class="nav-btn px-3 py-1.5 rounded-xl hover:text-brand hover:bg-brand-50/80 transition" data-target="showcase">Showcase</button>
+          <button onclick="navigateTo('dashboard')" id="nav-dashboard-link" class="nav-btn hidden px-3 py-1.5 rounded-xl hover:text-brand hover:bg-brand-50/80 transition" data-target="dashboard">Dashboard</button>
+          <button onclick="navigateTo('messages')" id="nav-messages-link" class="nav-btn hidden px-3 py-1.5 rounded-xl hover:text-brand hover:bg-brand-50/80 transition flex items-center gap-1" data-target="messages">
+            <span>Messages</span>
+          </button>
+        </nav>
+
+        <!-- Right Side Controls & Live Credits -->
+        <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+          
+          <!-- Live Credit Balance Pill -->
+          <div id="nav-credits-pill" class="hidden items-center">
+            <button onclick="openPlansModal()" title="Skill Credits Top-Up" class="flex items-center gap-1 sm:gap-1.5 bg-amber-50/90 hover:bg-amber-100 border border-amber-200 text-amber-900 px-2 sm:px-2.5 py-1.5 rounded-xl text-xs font-bold transition shadow-xs whitespace-nowrap backdrop-blur-md">
+              <span class="text-xs sm:text-sm">🪙</span>
+              <span id="header-credits-count" class="font-black">10</span>
+              <span class="hidden md:inline text-[10px] text-amber-700 uppercase font-semibold">Credits</span>
+              <span class="px-1 py-0.2 bg-amber-200 text-amber-900 rounded text-[9px] font-black">+ Top Up</span>
+            </button>
+          </div>
+
+          <!-- Voucher Rewards Store Button -->
+          <button onclick="openRewardsModal()" title="Redeem Vouchers" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold transition shadow-xs shadow-emerald-500/20 whitespace-nowrap">
+            <i class="fa-solid fa-gift"></i>
+            <span class="hidden md:inline">Vouchers</span>
+          </button>
+
+          <!-- Logged Out Container -->
+          <div id="auth-logged-out" class="flex items-center gap-1.5 sm:gap-2">
+            <button onclick="openAuthModal('login')" class="text-xs sm:text-sm font-semibold text-slate-700 hover:text-brand px-2.5 py-1.5 transition whitespace-nowrap">Log In</button>
+            <button onclick="openAuthModal('register')" class="text-xs sm:text-sm font-bold text-white bg-brand hover:bg-brand-dark px-3 py-1.5 rounded-xl shadow-xs transition whitespace-nowrap">Get Started</button>
+          </div>
+
+          <!-- Logged In Container -->
+          <div id="auth-logged-in" class="hidden items-center gap-1 sm:gap-2">
+            <button onclick="viewMyProfile()" class="flex items-center gap-1.5 sm:gap-2 p-1 rounded-xl hover:bg-slate-100/80 transition max-w-[130px] sm:max-w-[170px]">
+              <img id="header-avatar" src="WhatsApp Image 2026-09-08 at 1.02.14 AM.jpeg" alt="Avatar" class="w-8 h-8 rounded-lg object-cover ring-1 ring-slate-300 shrink-0 bg-white" onerror="this.onerror=null; this.src=getDefaultAvatar('Ranjan Kumar Ray');">
+              <div class="hidden lg:block text-left text-xs min-w-0">
+                <div id="header-user-name" class="font-bold text-slate-900 leading-tight truncate">Ranjan Kumar Ray</div>
+                <div id="header-user-badge" class="text-[10px] text-secondary-dark font-semibold truncate">Verified ✓</div>
+              </div>
+            </button>
+            <button onclick="handleLogout()" title="Log Out" class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-slate-100 transition text-xs shrink-0">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            </button>
+          </div>
+
+          <!-- Mobile / Tablet Menu Toggle -->
+          <button onclick="toggleMobileMenu()" class="xl:hidden p-2 rounded-lg text-slate-700 hover:bg-slate-100 shrink-0" aria-label="Toggle navigation menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-menu" class="hidden xl:hidden border-t border-slate-200 bg-white px-4 py-3 space-y-1 text-sm font-semibold text-slate-700">
+      <button onclick="navigateTo('landing'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100">Home</button>
+      <button onclick="navigateTo('explore'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100">Explore Skills</button>
+      <button onclick="navigateTo('exchange'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100 flex items-center justify-between">
+        <span>Skill Exchange</span>
+        <span class="px-1.5 py-0.2 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded-full">MATCH</span>
+      </button>
+      <button onclick="navigateTo('showcase'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100">Showcase Feed</button>
+      <button onclick="navigateTo('dashboard'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100">Dashboard</button>
+      <button onclick="navigateTo('messages'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100">Messages</button>
+      <div class="pt-2 border-t border-slate-100 flex items-center gap-2">
+        <button onclick="openRewardsModal(); toggleMobileMenu()" class="flex-1 py-2 px-3 rounded-lg bg-emerald-50 text-emerald-800 text-xs font-bold text-center">
+          🎁 Vouchers
+        </button>
+        <button onclick="openPlansModal(); toggleMobileMenu()" class="flex-1 py-2 px-3 rounded-lg bg-amber-50 text-amber-800 text-xs font-bold text-center">
+          🪙 Top-Up Credits
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow relative z-10">
+
+    <!-- VIEW 1: LANDING PAGE -->
+    <section id="view-landing" class="view-panel block">
+      
+      <!-- Hero Section -->
+      <div class="relative pt-10 pb-16 lg:pt-14 lg:pb-24 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            
+            <!-- Left Text Content -->
+            <div class="lg:col-span-7 text-center lg:text-left space-y-6">
+              <div class="inline-flex items-center gap-2 bg-brand-50 border border-brand-100 text-brand px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-2xs">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <span>Peer-to-Peer College Skill Exchange</span>
+              </div>
+
+              <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-aikyaDark tracking-tight leading-tight">
+                Learn Teach <br class="hidden sm:inline">
+                Exchange <span class="text-brand">Grow Together</span>
+              </h1>
+
+              <p class="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0 font-normal leading-relaxed">
+                Connect directly with university peers to swap skills. Get <strong>10 starter credits</strong> on sign up, spend 10 credits to book 1-on-1 mentorship, and earn 10 credits every time you teach.
+              </p>
+
+              <!-- Popular Skills Pills -->
+              <div class="flex flex-wrap items-center justify-center lg:justify-start gap-2 pt-1 text-xs">
+                <span class="text-slate-400 font-semibold">Popular Skills:</span>
+                <span class="bg-white/80 border border-slate-200/80 px-2.5 py-1 rounded-lg text-slate-700 font-medium">MERN Stack</span>
+                <span class="bg-white/80 border border-slate-200/80 px-2.5 py-1 rounded-lg text-slate-700 font-medium">IoT & Arduino</span>
+                <span class="bg-white/80 border border-slate-200/80 px-2.5 py-1 rounded-lg text-slate-700 font-medium">Graphic Design</span>
+                <span class="bg-white/80 border border-slate-200/80 px-2.5 py-1 rounded-lg text-slate-700 font-medium">CAD 3D Modeling</span>
+                <span class="bg-white/80 border border-slate-200/80 px-2.5 py-1 rounded-lg text-slate-700 font-medium">Public Speaking</span>
+              </div>
+
+              <!-- Hero Call to Actions -->
+              <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-3">
+                <button onclick="navigateTo('explore')" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-brand hover:bg-brand-dark text-white font-bold text-sm shadow-md shadow-brand/20 transition hover:scale-[1.02]">
+                  <i class="fa-solid fa-compass mr-1.5"></i> Explore Skills
+                </button>
+                <button onclick="navigateTo('exchange')" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-secondary hover:bg-secondary-dark text-white font-bold text-sm shadow-md shadow-secondary/20 transition hover:scale-[1.02]">
+                  <i class="fa-solid fa-arrows-rotate mr-1.5"></i> Find Skill Matches
+                </button>
+                <button onclick="openPlansModal()" class="w-full sm:w-auto px-5 py-3 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 font-bold text-sm shadow-xs transition hover:scale-[1.02] flex items-center justify-center gap-1.5">
+                  <i class="fa-solid fa-bolt text-amber-500"></i> Top-Up Credits
+                </button>
+              </div>
+
+            </div>
+
+            <!-- Right Interactive Graphic / Live Exchange Match -->
+            <div class="lg:col-span-5 relative flex justify-center">
+              <div class="relative w-full max-w-md glass-card p-6 rounded-3xl space-y-4 shadow-xl">
+                
+                <div class="flex items-center justify-between border-b border-slate-200/60 pb-3">
+                  <span class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                    <i class="fa-solid fa-bolt text-amber-500"></i> Live Exchange Match
+                  </span>
+                  <span class="text-xs font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2.5 py-0.5 rounded-md">
+                    95% Skill Match
+                  </span>
+                </div>
+
+                <!-- Floating Card Supriya Verma -->
+                <div class="glass-panel p-4 rounded-2xl border border-white/90 floating-card-1 shadow-xs">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                      <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" class="w-11 h-11 rounded-xl object-cover ring-2 ring-brand">
+                      <div>
+                        <h4 class="font-bold text-sm text-slate-900">Supriya Verma</h4>
+                        <p class="text-[11px] text-slate-500">GEC Banka (BEU) • Verified Student ✓</p>
+                      </div>
+                    </div>
+                    <span class="text-amber-500 text-xs font-bold"><i class="fa-solid fa-star"></i> 4.9</span>
+                  </div>
+                  <div class="mt-3 flex items-center justify-between text-xs pt-2 border-t border-slate-200/60">
+                    <div>
+                      <span class="text-[10px] uppercase font-bold text-slate-400 block">Can Teach:</span>
+                      <span class="font-bold text-brand">IoT & Arduino</span>
+                    </div>
+                    <div class="text-right">
+                      <span class="text-[10px] uppercase font-bold text-slate-400 block">Wants to Learn:</span>
+                      <span class="font-bold text-secondary-dark">Graphic Design</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Central Exchange Arrow Indicator -->
+                <div class="flex items-center justify-center -my-2 relative z-10">
+                  <div class="w-9 h-9 rounded-full bg-gradient-to-r from-brand to-secondary text-white flex items-center justify-center shadow-md shadow-brand/30">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                  </div>
+                </div>
+
+                <!-- Floating Card Student B (Priya Nair) -->
+                <div class="glass-panel p-4 rounded-2xl border border-white/90 floating-card-2 shadow-xs">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                      <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80" class="w-11 h-11 rounded-xl object-cover ring-2 ring-secondary">
+                      <div>
+                        <h4 class="font-bold text-sm text-slate-900">Priya Nair</h4>
+                        <p class="text-[11px] text-slate-500">NIFT Delhi • Verified Student ✓</p>
+                      </div>
+                    </div>
+                    <span class="text-amber-500 text-xs font-bold"><i class="fa-solid fa-star"></i> 5.0</span>
+                  </div>
+                  <div class="mt-3 flex items-center justify-between text-xs pt-2 border-t border-slate-200/60">
+                    <div>
+                      <span class="text-[10px] uppercase font-bold text-slate-400 block">Can Teach:</span>
+                      <span class="font-bold text-secondary-dark">Graphic Design</span>
+                    </div>
+                    <div class="text-right">
+                      <span class="text-[10px] uppercase font-bold text-slate-400 block">Wants to Learn:</span>
+                      <span class="font-bold text-brand">IoT & Arduino</span>
+                    </div>
+                  </div>
+                </div>
+
+                <button onclick="openRequestModal('usr_priya')" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+                  <span>Request This Exchange</span>
+                  <span class="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.2 rounded font-mono">10 🪙</span>
+                </button>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Statistics Section with JavaScript IntersectionObserver -->
+      <section class="py-10 glass-panel border-y border-slate-200/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center" id="stats-section">
+            <div class="p-3">
+              <div class="text-3xl sm:text-4xl font-black text-brand" data-target-num="1000">0</div>
+              <p class="text-xs sm:text-sm font-semibold text-slate-500 mt-1 uppercase tracking-wider">1,000+ Students</p>
+            </div>
+            <div class="p-3">
+              <div class="text-3xl sm:text-4xl font-black text-secondary-dark" data-target-num="500">0</div>
+              <p class="text-xs sm:text-sm font-semibold text-slate-500 mt-1 uppercase tracking-wider">500+ Skills</p>
+            </div>
+            <div class="p-3">
+              <div class="text-3xl sm:text-4xl font-black text-indigo-700" data-target-num="2000">0</div>
+              <p class="text-xs sm:text-sm font-semibold text-slate-500 mt-1 uppercase tracking-wider">2,000+ Skill Exchanges</p>
+            </div>
+            <div class="p-3">
+              <div class="text-3xl sm:text-4xl font-black text-amber-500" data-target-num="95">0</div>
+              <p class="text-xs sm:text-sm font-semibold text-slate-500 mt-1 uppercase tracking-wider">95% Positive Feedback</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- On-Page Dedicated Top-Up Plans Section (Rs 49 & Rs 99) -->
+      <section class="py-16">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center max-w-2xl mx-auto mb-12">
+            <span class="text-xs font-bold uppercase tracking-wider text-amber-700 bg-amber-100 border border-amber-200 px-3.5 py-1 rounded-full">No Subscriptions • Pure Top-Up</span>
+            <h2 class="text-3xl font-extrabold text-aikyaDark mt-3 tracking-tight">Skill Credit Top-Up Plans</h2>
+            <p class="text-slate-600 mt-2 text-xs sm:text-sm">Pay once, keep forever. 10 credits book 1 full peer mentorship session.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Pack 1: Rs 49 -> 10 Credits -->
+            <div class="glass-card p-6 rounded-3xl border-2 border-slate-200 hover:border-amber-400 transition flex flex-col justify-between shadow-sm">
+              <div>
+                <div class="flex justify-between items-center mb-2">
+                  <h3 class="font-extrabold text-base text-slate-800">Starter Top-Up</h3>
+                  <span class="text-[10px] font-black uppercase bg-slate-100 text-slate-700 px-2 py-0.5 rounded">Standard</span>
+                </div>
+                <div class="text-4xl font-black text-slate-900 mb-2">₹49</div>
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-800 border border-amber-200 rounded-xl text-xs font-black mb-4">
+                  <span>🪙 10 Skill Credits</span>
+                </div>
+                <ul class="text-xs text-slate-600 space-y-2 mb-6">
+                  <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> 1 Full Peer Learning Exchange</li>
+                  <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Offline Campus Meetup or Online Video Call</li>
+                  <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Credits never expire</li>
+                </ul>
+              </div>
+              <button onclick="startTopupCheckout(10, 49, '10 Credits Starter Pack')" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center justify-center gap-1.5">
+                <span>Top Up for ₹49</span>
+              </button>
+            </div>
+
+            <!-- Pack 2: Rs 99 -> 30 Credits -->
+            <div class="glass-card p-6 rounded-3xl border-2 border-brand relative flex flex-col justify-between shadow-md bg-brand-50/20">
+              <span class="absolute -top-3 right-5 bg-brand text-white text-[9px] font-black uppercase px-3 py-1 rounded-full shadow-xs">
+                BEST VALUE • 3x CREDITS
+              </span>
+              <div>
+                <div class="flex justify-between items-center mb-2">
+                  <h3 class="font-extrabold text-base text-brand-dark">Value Top-Up</h3>
+                  <span class="text-[10px] font-black uppercase bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono">3x Credits</span>
+                </div>
+                <div class="text-4xl font-black text-slate-900 mb-2">₹99</div>
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-brand-100 text-brand-dark border border-brand-200 rounded-xl text-xs font-black mb-4">
+                  <span>🪙 30 Skill Credits</span>
+                </div>
+                <ul class="text-xs text-slate-600 space-y-2 mb-6">
+                  <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand"></i> 3 Full Peer Learning Exchanges</li>
+                  <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand"></i> Access mentors across all 44 BEU colleges</li>
+                  <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand"></i> Boost your work on campus feed</li>
+                  <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand"></i> Credits never expire</li>
+                </ul>
+              </div>
+              <button onclick="startTopupCheckout(30, 99, '30 Credits Value Pack')" class="w-full py-3 bg-brand hover:bg-brand-dark text-white rounded-xl text-xs font-bold transition shadow-md shadow-brand/20 flex items-center justify-center gap-1.5">
+                <span>Top Up for ₹99</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </section>
+
+    <!-- VIEW 2: EXPLORE SKILLS -->
+    <section id="view-explore" class="view-panel hidden py-10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        
+        <!-- Back Navigation Bar -->
+        <div class="flex items-center justify-between">
+          <button onclick="goBackGlobal()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-brand-50 hover:text-brand transition shadow-xs">
+            <i class="fa-solid fa-arrow-left text-[11px]"></i>
+            <span class="nav-back-label">Back to Home</span>
+          </button>
+          <button onclick="resetExploreFilters()" class="text-xs font-bold text-slate-600 hover:text-brand bg-white px-3 py-2 rounded-xl border border-slate-200 shadow-xs transition">
+            <i class="fa-solid fa-rotate-left mr-1"></i> Reset Filters
+          </button>
+        </div>
+
+        <div>
+          <h1 class="text-3xl font-black text-slate-900 tracking-tight">Explore Skills & Students</h1>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">Discover mentors across Bihar Engineering University (BEU) colleges and universities across India.</p>
+        </div>
+
+        <!-- Filter Console -->
+        <div class="glass-card p-5 rounded-3xl shadow-xs space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+            
+            <!-- Search Bar -->
+            <div class="md:col-span-5 relative">
+              <i class="fa-solid fa-magnifying-glass text-slate-400 absolute left-3.5 top-3.5 text-xs"></i>
+              <input type="text" id="explore-search" oninput="applyExploreFilters()" placeholder="Search by student, skill, branch, or college..." class="w-full pl-9 pr-4 py-2 bg-white/80 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-brand focus:bg-white transition">
+            </div>
+
+            <!-- Category Filter -->
+            <div class="md:col-span-3">
+              <select id="explore-category" onchange="applyExploreFilters()" class="w-full py-2 px-3 bg-white/80 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-700 focus:outline-none focus:ring-1 focus:ring-brand">
+                <option value="all">All Categories</option>
+                <option value="Programming">Programming & Tech</option>
+                <option value="Design">Graphic Design & UI/UX</option>
+                <option value="Media">Photography & Video Editing</option>
+                <option value="Music">Music & Audio</option>
+                <option value="Dance">Dance & Performance</option>
+                <option value="SoftSkills">Public Speaking & Soft Skills</option>
+                <option value="Academics">Academics & Mathematics</option>
+              </select>
+            </div>
+
+            <!-- Skill Level -->
+            <div class="md:col-span-2">
+              <select id="explore-level" onchange="applyExploreFilters()" class="w-full py-2 px-3 bg-white/80 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-700 focus:outline-none focus:ring-1 focus:ring-brand">
+                <option value="all">Any Level</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+              </select>
+            </div>
+
+            <!-- Verified Checkbox -->
+            <div class="md:col-span-2 flex items-center justify-end">
+              <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700 select-none">
+                <input type="checkbox" id="explore-verified" onchange="applyExploreFilters()" class="w-4 h-4 rounded text-brand focus:ring-brand">
+                <span>Verified Only ✓</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Category Quick Pills -->
+          <div class="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-200/60 text-xs">
+            <span class="text-slate-400 font-bold uppercase tracking-wider text-[10px] mr-1">Categories:</span>
+            <button onclick="setCategoryFilter('all')" class="cat-pill text-[11px] font-bold px-3 py-1 rounded-xl bg-brand text-white shadow-xs" data-cat="all">All (<span id="cat-count-all">0</span>)</button>
+            <button onclick="setCategoryFilter('Programming')" class="cat-pill text-[11px] font-bold px-3 py-1 rounded-xl bg-white/80 border border-slate-200 text-slate-600 hover:bg-white" data-cat="Programming">Programming (<span id="cat-count-Programming">0</span>)</button>
+            <button onclick="setCategoryFilter('Design')" class="cat-pill text-[11px] font-bold px-3 py-1 rounded-xl bg-white/80 border border-slate-200 text-slate-600 hover:bg-white" data-cat="Design">Design (<span id="cat-count-Design">0</span>)</button>
+            <button onclick="setCategoryFilter('Media')" class="cat-pill text-[11px] font-bold px-3 py-1 rounded-xl bg-white/80 border border-slate-200 text-slate-600 hover:bg-white" data-cat="Media">Media (<span id="cat-count-Media">0</span>)</button>
+            <button onclick="setCategoryFilter('Music')" class="cat-pill text-[11px] font-bold px-3 py-1 rounded-xl bg-white/80 border border-slate-200 text-slate-600 hover:bg-white" data-cat="Music">Music (<span id="cat-count-Music">0</span>)</button>
+            <button onclick="setCategoryFilter('Dance')" class="cat-pill text-[11px] font-bold px-3 py-1 rounded-xl bg-white/80 border border-slate-200 text-slate-600 hover:bg-white" data-cat="Dance">Dance (<span id="cat-count-Dance">0</span>)</button>
+            <button onclick="setCategoryFilter('SoftSkills')" class="cat-pill text-[11px] font-bold px-3 py-1 rounded-xl bg-white/80 border border-slate-200 text-slate-600 hover:bg-white" data-cat="SoftSkills">Soft Skills (<span id="cat-count-SoftSkills">0</span>)</button>
+            <button onclick="setCategoryFilter('Academics')" class="cat-pill text-[11px] font-bold px-3 py-1 rounded-xl bg-white/80 border border-slate-200 text-slate-600 hover:bg-white" data-cat="Academics">Academics (<span id="cat-count-Academics">0</span>)</button>
+          </div>
+        </div>
+
+        <!-- Student Cards Grid -->
+        <div id="explore-students-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+        <!-- Empty State -->
+        <div id="explore-empty-state" class="hidden text-center py-16 bg-white rounded-3xl border border-dashed border-slate-300 p-8">
+          <i class="fa-solid fa-user-slash text-slate-300 text-4xl mb-3"></i>
+          <h3 class="text-sm font-bold text-slate-800">No students found matching your criteria</h3>
+          <p class="text-xs text-slate-500 mt-1">Try resetting your filters or searching for another college or skill.</p>
+          <button onclick="resetExploreFilters()" class="mt-3 px-4 py-2 bg-brand-50 text-brand rounded-xl text-xs font-bold hover:bg-brand-100">Reset Filters</button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- VIEW 3: SKILL EXCHANGE (SMART MATCHING SYSTEM) -->
+    <section id="view-exchange" class="view-panel hidden py-10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        
+        <!-- Back Navigation Bar -->
+        <div class="flex items-center justify-between">
+          <button onclick="goBackGlobal()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-brand-50 hover:text-brand transition shadow-xs">
+            <i class="fa-solid fa-arrow-left text-[11px]"></i>
+            <span class="nav-back-label">Back to Home</span>
+          </button>
+        </div>
+
+        <!-- Header Banner -->
+        <div class="bg-aikyaDark text-white rounded-3xl p-6 sm:p-8 shadow-md relative overflow-hidden">
+          <div class="max-w-2xl relative z-10">
+            <span class="inline-flex items-center gap-1.5 bg-brand/30 text-brand-light px-3 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+              <i class="fa-solid fa-brain"></i> AIKYA Smart Matcher
+            </span>
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Reciprocal Skill Exchange Matcher</h1>
+            <p class="mt-2 text-slate-300 text-xs sm:text-sm leading-relaxed">
+              Our bidirectional algorithm connects you with peers whose teaching capabilities match what you want to learn, and vice versa.
+            </p>
+          </div>
+          <div class="absolute right-6 top-6 hidden md:block text-right">
+            <span class="text-xs text-slate-400 block font-semibold">Cost per Proposal:</span>
+            <span class="text-amber-400 font-extrabold text-sm">10 Credits 🪙</span>
+          </div>
+        </div>
+
+        <!-- Current User Skill Context -->
+        <div class="glass-card p-5 rounded-3xl shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Your Current Matching Preferences:</span>
+            <div class="flex flex-wrap items-center gap-2 mt-1 text-xs">
+              <span class="font-bold text-slate-700">You Teach:</span>
+              <div id="matcher-user-teach-tags" class="flex flex-wrap gap-1"></div>
+              <span class="font-bold text-slate-700 ml-2">You Learn:</span>
+              <div id="matcher-user-learn-tags" class="flex flex-wrap gap-1"></div>
+            </div>
+          </div>
+          <button onclick="openEditProfileModal()" class="text-xs font-bold text-brand bg-brand-50 hover:bg-brand-100 px-3.5 py-2 rounded-xl transition border border-brand-100 shrink-0">
+            <i class="fa-solid fa-pen mr-1"></i> Edit My Skills
+          </button>
+        </div>
+
+        <!-- Matches Container -->
+        <div class="space-y-4" id="smart-matches-container"></div>
+
+      </div>
+    </section>
+
+    <!-- VIEW 4: TALENT SHOWCASE FEED -->
+    <section id="view-showcase" class="view-panel hidden py-10">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        
+        <div class="flex items-center justify-between">
+          <button onclick="goBackGlobal()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-brand-50 hover:text-brand transition shadow-xs">
+            <i class="fa-solid fa-arrow-left text-[11px]"></i>
+            <span class="nav-back-label">Back to Home</span>
+          </button>
+          <button onclick="openCreatePostModal()" class="px-4 py-2 bg-brand hover:bg-brand-dark text-white rounded-xl font-bold text-xs shadow-xs transition flex items-center gap-1.5">
+            <i class="fa-solid fa-plus"></i> Showcase Your Work
+          </button>
+        </div>
+
+        <div>
+          <h1 class="text-3xl font-black text-slate-900 tracking-tight">Talent Showcase</h1>
+          <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Explore practical projects, code repos, and portfolio demos from campus creators.</p>
+        </div>
+
+        <div class="space-y-6" id="showcase-feed-container"></div>
+
+      </div>
+    </section>
+
+    <!-- VIEW 5: STUDENT PROFILE -->
+    <section id="view-profile" class="view-panel hidden py-8 sm:py-10">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+        
+        <!-- Back Navigation Bar -->
+        <div class="flex items-center justify-between">
+          <button onclick="goBackFromProfile()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-brand-50 hover:text-brand transition shadow-xs group">
+            <i class="fa-solid fa-arrow-left text-[11px] transition-transform duration-200 group-hover:-translate-x-1"></i>
+            <span id="profile-back-btn-text">Back to Explore</span>
+          </button>
+          <span class="text-[11px] text-slate-400 font-semibold hidden sm:inline-flex items-center gap-1.5">
+            <i class="fa-solid fa-user-circle text-slate-300"></i> Student Profile View
+          </span>
+        </div>
+
+        <div id="profile-card-container"></div>
+      </div>
+    </section>
+
+    <!-- VIEW 6: STUDENT DASHBOARD -->
+    <section id="view-dashboard" class="view-panel hidden py-10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        
+        <!-- Welcome Hero -->
+        <div class="glass-card p-6 rounded-3xl shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-2xl font-black text-slate-900 tracking-tight">
+                Welcome back, <span id="dash-user-name" class="text-brand">Ranjan</span> 👋
+              </h1>
+              <span id="dash-plan-badge" class="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-300">
+                10 Credits
+              </span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">Manage your exchange proposals, completed peer sessions, and credit transaction ledger.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="openPlansModal()" class="px-3.5 py-2 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
+              <span class="text-sm">🪙</span>
+              <span>Recharge Credits</span>
+            </button>
+            <button onclick="openEditProfileModal()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">
+              <i class="fa-solid fa-user-pen mr-1"></i> Edit Profile & Photo
+            </button>
+            <button onclick="navigateTo('exchange')" class="px-4 py-2 bg-brand text-white rounded-xl text-xs font-bold shadow-xs hover:bg-brand-dark transition">
+              <i class="fa-solid fa-arrows-rotate mr-1"></i> Matches
+            </button>
+          </div>
+        </div>
+
+        <!-- 5 Metric Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          
+          <div class="glass-card bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-2xl border border-amber-200 shadow-xs flex items-center justify-between">
+            <div>
+              <span class="text-amber-800 text-[10px] font-bold uppercase tracking-wider block">Skill Credits</span>
+              <div class="text-2xl font-black text-amber-900 mt-0.5" id="dash-stat-credits">10</div>
+              <span class="text-[10px] text-amber-700 font-semibold cursor-pointer hover:underline" onclick="openPlansModal()">+ Top Up</span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-lg">
+              🪙
+            </div>
+          </div>
+
+          <div class="glass-card p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
+            <div>
+              <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider block">Skills Offered</span>
+              <div class="text-2xl font-black text-slate-900 mt-0.5" id="dash-stat-teaching">3</div>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand flex items-center justify-center font-bold">
+              <i class="fa-solid fa-chalkboard-user"></i>
+            </div>
+          </div>
+
+          <div class="glass-card p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
+            <div>
+              <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider block">Skills Learning</span>
+              <div class="text-2xl font-black text-slate-900 mt-0.5" id="dash-stat-learning">2</div>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-secondary-50 text-secondary-dark flex items-center justify-center font-bold">
+              <i class="fa-solid fa-book-open-reader"></i>
+            </div>
+          </div>
+
+          <div class="glass-card p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
+            <div>
+              <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider block">Active Exchanges</span>
+              <div class="text-2xl font-black text-slate-900 mt-0.5" id="dash-stat-active">1</div>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+              <i class="fa-solid fa-repeat"></i>
+            </div>
+          </div>
+
+          <div class="glass-card p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
+            <div>
+              <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider block">Rating Score</span>
+              <div class="text-2xl font-black text-slate-900 mt-0.5" id="dash-stat-rating">4.9</div>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+              <i class="fa-solid fa-star"></i>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Two Column Layout: Request Manager & Credit Ledger -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- Request Manager (8 cols) -->
+          <div class="lg:col-span-8 space-y-4">
+            <div class="glass-card p-5 rounded-3xl shadow-xs">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-base font-bold text-slate-900">Exchange Proposals & Online Classes</h2>
+                <div class="flex gap-1 bg-slate-100 p-1 rounded-xl text-xs font-bold">
+                  <button onclick="switchRequestTab('received')" id="req-tab-received" class="px-3 py-1 rounded-lg bg-white shadow-xs text-slate-800">Received (<span id="count-received">0</span>)</button>
+                  <button onclick="switchRequestTab('sent')" id="req-tab-sent" class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900">Sent (<span id="count-sent">0</span>)</button>
+                </div>
+              </div>
+              <div id="dashboard-requests-list" class="space-y-3"></div>
+            </div>
+
+            <!-- Redeemed Vouchers Vault -->
+            <div class="glass-card bg-gradient-to-r from-emerald-50/70 to-teal-50/70 p-5 rounded-3xl border border-emerald-200/80 shadow-xs">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="text-xl">🎁</span>
+                  <div>
+                    <h3 class="text-sm font-black text-slate-900">Redeemed Voucher Vault</h3>
+                    <p class="text-[11px] text-slate-500">Claimed rewards using your skill credits (Spotify, Domains, Google Play & Cafe).</p>
+                  </div>
+                </div>
+                <button onclick="openRewardsModal()" class="text-xs font-bold text-emerald-700 bg-white border border-emerald-300 hover:bg-emerald-100 px-3 py-1.5 rounded-xl shadow-xs transition">
+                  + Redeem New Perk
+                </button>
+              </div>
+              <div id="dashboard-vouchers-list" class="space-y-2 text-xs"></div>
+            </div>
+
+            <!-- Credit Ledger -->
+            <div class="glass-card p-5 rounded-3xl shadow-xs">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                  <span>🪙 Credit Transaction History</span>
+                </h3>
+                <button onclick="openPlansModal()" class="text-xs font-bold text-brand hover:underline">Top Up Wallet</button>
+              </div>
+              <div id="dashboard-credits-ledger" class="space-y-2 divide-y divide-slate-100 text-xs"></div>
+            </div>
+          </div>
+
+          <!-- Badges and Instant Top-Up (4 cols) -->
+          <div class="lg:col-span-4 space-y-4">
+            
+            <!-- Quick Credit Top-Up Card -->
+            <div class="bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-900 text-white p-5 rounded-3xl shadow-xs space-y-3.5 border border-indigo-800/40">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-black uppercase text-amber-400 tracking-wider flex items-center gap-1.5">
+                  <i class="fa-solid fa-bolt text-amber-400"></i> Quick Top-Up
+                </span>
+                <span class="text-[10px] font-bold bg-white/10 px-2 py-0.5 rounded text-slate-300">No Subscriptions</span>
+              </div>
+              <div>
+                <h4 class="font-extrabold text-sm text-white">Need More Learning Credits?</h4>
+                <p class="text-xs text-slate-300 leading-relaxed mt-1">
+                  10 credits unlock 1 full exchange session with any student mentor.
+                </p>
+              </div>
+              <div class="grid grid-cols-2 gap-2 pt-1">
+                <button onclick="startTopupCheckout(10, 49, '10 Credits Starter Pack')" class="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-left transition">
+                  <div class="text-amber-400 font-black text-xs">🪙 10 Credits</div>
+                  <div class="text-white font-extrabold text-sm mt-0.5">₹49</div>
+                </button>
+                <button onclick="startTopupCheckout(30, 99, '30 Credits Value Pack')" class="p-2.5 rounded-xl bg-brand hover:bg-brand-light border border-brand-light text-left transition shadow-xs">
+                  <div class="text-amber-300 font-black text-xs">🪙 30 Credits</div>
+                  <div class="text-white font-extrabold text-sm mt-0.5">₹99</div>
+                </button>
+              </div>
+              <button onclick="openPlansModal()" class="w-full py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white text-[11px] font-bold border border-white/10 transition text-center">
+                View All Top-Up Details →
+              </button>
+            </div>
+
+            <!-- Badges -->
+            <div class="glass-card p-5 rounded-3xl shadow-xs">
+              <h3 class="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-award text-amber-500"></i> Earned Skill Badges
+              </h3>
+              <div id="dash-badges-list" class="flex flex-wrap gap-2"></div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- VIEW 7: MESSAGING SYSTEM -->
+    <section id="view-messages" class="view-panel hidden py-8">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+        
+        <!-- Back Navigation Bar -->
+        <div class="flex items-center justify-between">
+          <button onclick="goBackGlobal()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-brand-50 hover:text-brand transition shadow-xs">
+            <i class="fa-solid fa-arrow-left text-[11px]"></i>
+            <span class="nav-back-label">Back to Previous Page</span>
+          </button>
+        </div>
+
+        <div class="glass-card rounded-3xl overflow-hidden flex flex-col md:flex-row h-[620px] shadow-lg border border-slate-200">
+          
+          <!-- Conversation List -->
+          <div id="chat-sidebar" class="w-full md:w-80 border-r border-slate-200 flex flex-col h-full bg-slate-50/70">
+            <div class="p-3.5 border-b border-slate-200 bg-white/80">
+              <div class="flex justify-between items-center">
+                <h2 class="text-sm font-bold text-slate-900">Peer Conversations</h2>
+                <span id="chat-threads-count" class="text-[10px] font-bold px-2 py-0.5 bg-slate-100 rounded-full text-slate-600">Peers</span>
+              </div>
+              <input type="text" id="chat-search-input" oninput="filterChatPartners()" placeholder="Search peers..." class="mt-2 w-full px-3 py-1.5 text-xs bg-slate-100/80 border-none rounded-xl focus:ring-1 focus:ring-brand focus:bg-white">
+            </div>
+            <div class="overflow-y-auto flex-1 divide-y divide-slate-100" id="chat-threads-container"></div>
+          </div>
+
+          <!-- Main Chat Panel / Centered Empty State -->
+          <div id="chat-main-container" class="flex-1 flex flex-col h-full bg-white relative">
+            
+            <!-- Centered New Conversation Placeholder -->
+            <div id="chat-empty-state" class="flex flex-col items-center justify-center h-full p-8 text-center space-y-4">
+              <div class="w-16 h-16 rounded-3xl bg-brand-50 text-brand flex items-center justify-center text-2xl border border-brand-100 shadow-xs">
+                <i class="fa-solid fa-comments"></i>
+              </div>
+              <div class="max-w-xs">
+                <h3 class="font-extrabold text-base text-slate-900">Start a New Conversation</h3>
+                <p class="text-xs text-slate-500 mt-1">Select a peer mentor from the left or explore students to coordinate skill exchanges.</p>
+              </div>
+              <div class="flex flex-wrap gap-2 pt-2">
+                <button onclick="navigateTo('explore')" class="px-4 py-2 bg-brand text-white rounded-xl text-xs font-bold hover:bg-brand-dark transition shadow-xs">
+                  <i class="fa-solid fa-compass mr-1"></i> Explore Students
+                </button>
+                <button onclick="navigateTo('exchange')" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-200 transition">
+                  <i class="fa-solid fa-arrows-rotate mr-1"></i> Matcher
+                </button>
+              </div>
+            </div>
+
+            <!-- Active Chat Thread View -->
+            <div id="chat-active-window" class="hidden flex-col h-full">
+              <!-- Chat Header -->
+              <div class="p-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50/50" id="chat-window-header">
+                <div class="flex items-center gap-3">
+                  <button onclick="deselectChatPartner()" class="md:hidden p-1.5 text-slate-500 hover:text-slate-800 rounded-lg" title="Back to conversations">
+                    <i class="fa-solid fa-arrow-left"></i>
+                  </button>
+                  <img id="chat-header-img" src="" class="w-9 h-9 rounded-xl object-cover ring-1 ring-slate-300">
+                  <div>
+                    <div id="chat-header-name" class="font-bold text-xs text-slate-900">Student</div>
+                    <div class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                      <span>Online for Exchange</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <button onclick="startVideoCallFromChat()" class="px-3 py-1.5 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand text-xs font-bold transition flex items-center gap-1.5 border border-brand-100" title="Start Online Video Class">
+                    <i class="fa-solid fa-video"></i>
+                    <span class="hidden sm:inline">Video Call</span>
+                  </button>
+                  <button onclick="requestExchangeWithActiveChatUser()" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition flex items-center gap-1">
+                    <span>Exchange</span>
+                    <span class="text-[10px] text-amber-300 bg-white/15 px-1 rounded">10 🪙</span>
+                  </button>
+                  <button onclick="deselectChatPartner()" class="hidden md:flex p-2 text-slate-400 hover:text-slate-600 rounded-lg" title="Close chat">
+                    <i class="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Messages Stream -->
+              <div class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50/30" id="chat-messages-stream"></div>
+
+              <!-- Typing Indicator -->
+              <div id="chat-typing-indicator" class="hidden px-4 py-1 text-[11px] text-slate-400 italic">
+                Peer is typing...
+              </div>
+
+              <!-- Input Form -->
+              <form id="chat-form" onsubmit="handleSendChatMessage(event)" class="p-3 border-t border-slate-200 flex items-center gap-2 bg-white">
+                <input type="text" id="chat-input-text" placeholder="Type a message to your peer..." class="flex-1 px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-brand focus:bg-white" autocomplete="off">
+                <button type="submit" class="px-4 py-2 rounded-xl bg-brand hover:bg-brand-dark text-white font-bold text-xs shadow-xs transition">
+                  Send
+                </button>
+              </form>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 8: ADMIN DASHBOARD -->
+    <section id="view-admin" class="view-panel hidden py-10">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        
+        <div class="flex items-center justify-between">
+          <button onclick="goBackGlobal()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-brand-50 hover:text-brand transition shadow-xs">
+            <i class="fa-solid fa-arrow-left text-[11px]"></i>
+            <span class="nav-back-label">Back to Home</span>
+          </button>
+          <button onclick="resetDemoData()" class="px-3 py-1.5 rounded-xl bg-rose-600 text-white text-xs font-bold hover:bg-rose-700 transition">
+            Clear Local Cache
+          </button>
+        </div>
+
+        <div class="bg-aikyaDark text-white p-6 rounded-3xl shadow-xs">
+          <h1 class="text-2xl font-bold">Admin Verification & Economy Registry</h1>
+          <p class="text-xs text-slate-400 mt-1">Verify student identities, grant complimentary credits, and manage university campus nodes.</p>
+        </div>
+
+        <div class="glass-card rounded-3xl border border-slate-200 overflow-hidden shadow-xs">
+          <div class="p-4 border-b border-slate-200 font-bold text-sm text-slate-900">
+            Student Verification Registry (<span id="admin-student-count">0</span>)
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-600">
+              <thead class="bg-slate-50 text-slate-400 uppercase text-[10px] font-bold">
+                <tr>
+                  <th class="py-3 px-4">Student</th>
+                  <th class="py-3 px-4">College</th>
+                  <th class="py-3 px-4">Credits</th>
+                  <th class="py-3 px-4">Status</th>
+                  <th class="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-students-table-body" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 text-slate-500 text-xs mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-6">
+        <div class="space-y-2 md:col-span-2">
+          <div class="flex items-center gap-2.5">
+            <img src="image_d8ddcf.jpg" alt="AIKYA Logo" class="w-8 h-8 rounded-lg object-cover ring-1 ring-slate-200 shrink-0 bg-white" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=AIKYA&background=4F46E5&color=ffffff&bold=true';">
+            <span class="text-lg font-black text-slate-900">AIKYA</span>
+          </div>
+          <p class="text-xs text-slate-500 max-w-sm">"Learn Teach Exchange Grow Together"</p>
+          <p class="text-[11px] text-slate-400">Different people, one network. Peer-to-peer talent & skill exchange built for university communities.</p>
+        </div>
+        <div>
+          <h4 class="font-bold text-slate-900 uppercase text-[10px] mb-2">Platform</h4>
+          <ul class="space-y-1.5 text-xs">
+            <li><button onclick="navigateTo('landing')" class="hover:text-brand">Home</button></li>
+            <li><button onclick="navigateTo('explore')" class="hover:text-brand">Explore Skills</button></li>
+            <li><button onclick="navigateTo('exchange')" class="hover:text-brand">Skill Exchange</button></li>
+            <li><button onclick="navigateTo('showcase')" class="hover:text-brand">Showcase</button></li>
+            <li><button onclick="openPlansModal()" class="hover:text-amber-600 font-bold">🪙 Top-Up Credits</button></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold text-slate-900 uppercase text-[10px] mb-2">Administration</h4>
+          <ul class="space-y-1.5 text-xs">
+            <li><button onclick="navigateTo('admin')" class="hover:text-brand">Admin Verification Portal</button></li>
+          </ul>
+        </div>
+      </div>
+      <div class="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-400">
+        <div>&copy; 2026 AIKYA. All rights reserved.</div>
+        <div class="flex gap-4 mt-2 sm:mt-0">
+          <span>College Privacy</span>
+          <span>Terms of Service</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODAL: VIDEO CALL CONFERENCING & VIRTUAL CLASSROOM -->
+  <div id="modal-video-call" class="fixed inset-0 z-50 hidden bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-slate-900 w-full max-w-5xl rounded-3xl shadow-2xl border border-slate-800 overflow-hidden flex flex-col h-[94vh] max-h-[850px] text-white">
+      
+      <!-- Video Call Header -->
+      <div class="p-3.5 sm:p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/90">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-xl bg-brand/20 border border-brand/40 text-brand-light flex items-center justify-center text-sm font-black">
+            <i class="fa-solid fa-video"></i>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-sm text-white" id="call-room-title">Virtual Skill Session</h3>
+            <div class="text-[11px] text-slate-400 flex items-center gap-2">
+              <span>Peer: <strong id="call-partner-name" class="text-slate-200">Student</strong></span>
+              <span>•</span>
+              <span class="flex items-center gap-1 text-emerald-400">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span id="call-duration-timer">00:00</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="toggleCallNotesDrawer()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 transition flex items-center gap-1.5">
+            <i class="fa-solid fa-message"></i>
+            <span class="hidden sm:inline">In-Call Chat</span>
+          </button>
+          <button onclick="concludeAndTransferCallCredits()" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold text-white transition flex items-center gap-1.5 shadow-xs">
+            <i class="fa-solid fa-check-circle"></i>
+            <span class="hidden sm:inline">Conclude & Transfer (10 🪙)</span>
+          </button>
+          <button onclick="endVideoCall(false)" class="w-8 h-8 rounded-full bg-rose-600 hover:bg-rose-700 text-white flex items-center justify-center transition" title="Leave Call">
+            <i class="fa-solid fa-phone-slash text-xs"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Video Call Stage Area -->
+      <div class="flex-1 flex overflow-hidden relative">
+        
+        <!-- Video Canvas Stream Tiles -->
+        <div class="flex-1 p-3 sm:p-4 grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 relative bg-slate-950">
+          
+          <!-- Remote Peer Tile -->
+          <div class="relative rounded-2xl overflow-hidden bg-slate-800 flex items-center justify-center border border-slate-700/80 group">
+            <div id="call-peer-stream" class="flex flex-col items-center justify-center p-6 text-center space-y-3">
+              <div class="relative">
+                <img id="call-peer-avatar" src="" class="w-24 h-24 rounded-2xl object-cover ring-4 ring-brand shadow-lg">
+                <span class="absolute bottom-0 right-0 w-5 h-5 rounded-full bg-emerald-500 border-2 border-slate-900 flex items-center justify-center text-[9px] text-white">
+                  <i class="fa-solid fa-microphone"></i>
+                </span>
+              </div>
+              <div>
+                <h4 id="call-peer-display-name" class="font-extrabold text-base text-white">Peer Student</h4>
+                <p id="call-peer-college-label" class="text-xs text-slate-400">Campus Student</p>
+              </div>
+              <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-900/80 rounded-full text-[11px] text-emerald-400 border border-slate-700">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span>Active Speaker • Teaching Session</span>
+              </div>
+            </div>
+
+            <!-- Screen Share Simulation Overlay (Toggled via share button) -->
+            <div id="call-screenshare-view" class="hidden absolute inset-0 bg-slate-900 flex-col items-center justify-center p-6 text-center">
+              <i class="fa-solid fa-desktop text-4xl text-brand mb-2"></i>
+              <h4 class="font-bold text-sm text-white">Screen Sharing Active</h4>
+              <p class="text-xs text-slate-400">Interactive live code review and slide presentation stream.</p>
+            </div>
+
+            <div class="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-2">
+              <i class="fa-solid fa-user text-slate-400 text-[10px]"></i>
+              <span id="call-peer-tag-name">Peer Mentor</span>
+            </div>
+          </div>
+
+          <!-- Local Student Tile (Real webcam or simulated avatar) -->
+          <div class="relative rounded-2xl overflow-hidden bg-slate-800 flex items-center justify-center border border-slate-700/80">
+            <video id="call-local-video" autoplay playsinline muted class="w-full h-full object-cover hidden"></video>
+            
+            <div id="call-local-placeholder" class="flex flex-col items-center justify-center p-6 text-center space-y-3">
+              <img src="WhatsApp Image 2026-09-08 at 1.02.14 AM.jpeg" class="w-20 h-20 rounded-2xl object-cover ring-4 ring-slate-700 shadow-md bg-white" onerror="this.onerror=null; this.src=getDefaultAvatar('Ranjan Kumar Ray');">
+              <div>
+                <h4 class="font-extrabold text-sm text-white">You (Ranjan Kumar Ray)</h4>
+                <p class="text-xs text-slate-400">Student Camera</p>
+              </div>
+            </div>
+
+            <div class="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-2">
+              <span id="call-mic-status-icon" class="text-emerald-400"><i class="fa-solid fa-microphone text-[9px]"></i></span>
+              <span>You</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- In-Call Notes & Collaboration Drawer -->
+        <div id="call-notes-drawer" class="w-72 bg-slate-900 border-l border-slate-800 hidden flex-col h-full">
+          <div class="p-3 border-b border-slate-800 flex justify-between items-center">
+            <h4 class="font-bold text-xs text-white">Classroom Chat & Notes</h4>
+            <button onclick="toggleCallNotesDrawer()" class="text-slate-400 hover:text-white text-xs">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <div class="flex-1 p-3 overflow-y-auto space-y-2 text-xs" id="call-chat-stream">
+            <div class="p-2 rounded-xl bg-slate-800/80 text-slate-300 text-[11px]">
+              <strong class="text-brand-light block mb-0.5">Session Room</strong>
+              Welcome! Share GitHub links, code snippets, or formulas here.
+            </div>
+          </div>
+          <form onsubmit="handleSendCallMessage(event)" class="p-2 border-t border-slate-800 flex gap-1.5">
+            <input type="text" id="call-chat-input" placeholder="Type a note or question..." class="flex-1 px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:ring-1 focus:ring-brand">
+            <button type="submit" class="px-3 py-1.5 bg-brand text-white rounded-xl text-xs font-bold">Send</button>
+          </form>
+        </div>
+
+      </div>
+
+      <!-- Video Call Controls Bar -->
+      <div class="p-3 sm:p-4 border-t border-slate-800 bg-slate-950 flex items-center justify-between">
+        <div class="text-xs text-slate-400 hidden sm:block">
+          <span class="text-amber-400 font-bold">10 🪙</span> Session Escrow Active
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-3 mx-auto sm:mx-0">
+          <button onclick="toggleCallAudio()" id="btn-call-audio" class="w-11 h-11 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white flex items-center justify-center transition text-sm shadow-xs" title="Mute/Unmute Mic">
+            <i class="fa-solid fa-microphone"></i>
+          </button>
+          <button onclick="toggleCallVideo()" id="btn-call-video" class="w-11 h-11 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white flex items-center justify-center transition text-sm shadow-xs" title="Camera On/Off">
+            <i class="fa-solid fa-video"></i>
+          </button>
+          <button onclick="toggleCallScreenShare()" id="btn-call-screen" class="w-11 h-11 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white flex items-center justify-center transition text-sm shadow-xs" title="Share Screen">
+            <i class="fa-solid fa-desktop"></i>
+          </button>
+          <button onclick="toggleRaiseHand()" id="btn-call-hand" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition flex items-center gap-1.5" title="Raise Hand">
+            <i class="fa-solid fa-hand"></i>
+            <span class="hidden sm:inline">Raise Hand</span>
+          </button>
+          <button onclick="endVideoCall(true)" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-rose-600/20">
+            <i class="fa-solid fa-phone-slash"></i>
+            <span>End Call</span>
+          </button>
+        </div>
+
+        <div class="hidden sm:block text-right text-xs text-slate-400">
+          AIKYA WebRTC Engine
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: SKILL CREDIT TOP-UP STORE -->
+  <div id="modal-plans" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-100 overflow-hidden max-h-[92vh] flex flex-col">
+      
+      <!-- Modal Header -->
+      <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-amber-50 to-orange-50">
+        <div class="flex items-center gap-2.5">
+          <span class="text-2xl">🪙</span>
+          <div>
+            <h3 class="font-black text-slate-900 text-base sm:text-lg">Skill Credit Top-Up</h3>
+            <p class="text-[11px] text-amber-800">Recharge credits instantly on demand. Zero recurring fees or subscriptions.</p>
+          </div>
+        </div>
+        <button onclick="closePlansModal()" class="text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full hover:bg-white flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 overflow-y-auto space-y-5 flex-1">
+        
+        <!-- Active User Balance Status -->
+        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-xl">
+              🪙
+            </div>
+            <div>
+              <div class="text-[10px] uppercase font-bold text-slate-400">Current Credit Balance</div>
+              <div class="text-xl font-black text-slate-900">
+                <span id="modal-user-credits">10</span> <span class="text-xs font-semibold text-slate-500">Skill Credits</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-center sm:text-right text-[11px] text-slate-500">
+            <span class="block font-bold text-slate-700">10 Credits = 1 Skill Learning Session</span>
+            <span class="text-[10px] text-emerald-600 font-semibold">Earn +10 🪙 every time you teach a peer</span>
+          </div>
+        </div>
+
+        <!-- Top-Up Packs -->
+        <div>
+          <h4 class="font-black text-sm text-slate-900 mb-1">Choose Top-Up Pack</h4>
+          <p class="text-[11px] text-slate-500 mb-4">Pay once, keep forever. Use credits to learn from any peer mentor across campus.</p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <!-- Starter Pack: ₹49 for 10 Credits -->
+            <div class="rounded-2xl border-2 border-slate-200 hover:border-amber-400 p-5 flex flex-col justify-between bg-white transition shadow-xs">
+              <div>
+                <div class="flex justify-between items-center mb-2">
+                  <h5 class="font-bold text-sm text-slate-800">Starter Pack</h5>
+                  <span class="text-[9px] font-black uppercase bg-slate-100 text-slate-700 px-2 py-0.5 rounded">Standard</span>
+                </div>
+                <div class="text-3xl font-black text-slate-900 mb-1">₹49</div>
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-200 rounded-lg text-xs font-extrabold mb-3">
+                  <span>🪙 10 Skill Credits</span>
+                </div>
+                <ul class="text-xs text-slate-600 space-y-1.5 mb-4">
+                  <li class="flex items-center gap-1.5"><i class="fa-solid fa-check text-emerald-500 text-[10px]"></i> 1 Full Peer Exchange Session</li>
+                  <li class="flex items-center gap-1.5"><i class="fa-solid fa-check text-emerald-500 text-[10px]"></i> Direct In-Person / Virtual Meetup</li>
+                  <li class="flex items-center gap-1.5"><i class="fa-solid fa-check text-emerald-500 text-[10px]"></i> Credits never expire</li>
+                </ul>
+              </div>
+              <button onclick="startTopupCheckout(10, 49, '10 Credits Starter Pack')" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center justify-center gap-1.5">
+                <span>Top Up for ₹49</span>
+              </button>
+            </div>
+
+            <!-- Value Pack: ₹99 for 30 Credits -->
+            <div class="rounded-2xl border-2 border-brand hover:border-brand-dark p-5 flex flex-col justify-between bg-brand-50/20 relative shadow-md">
+              <span class="absolute -top-2.5 right-4 bg-brand text-white text-[9px] font-black uppercase px-2.5 py-0.5 rounded-full shadow-xs">
+                BEST VALUE
+              </span>
+              <div>
+                <div class="flex justify-between items-center mb-2">
+                  <h5 class="font-bold text-sm text-brand-dark">Value Pack</h5>
+                  <span class="text-[9px] font-black uppercase bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono">3x Credits</span>
+                </div>
+                <div class="text-3xl font-black text-slate-900 mb-1">₹99</div>
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-brand-100 text-brand-dark border border-brand-200 rounded-lg text-xs font-extrabold mb-3">
+                  <span>🪙 30 Skill Credits</span>
+                </div>
+                <ul class="text-xs text-slate-600 space-y-1.5 mb-4">
+                  <li class="flex items-center gap-1.5"><i class="fa-solid fa-check text-brand text-[10px]"></i> 3 Full Peer Exchange Sessions</li>
+                  <li class="flex items-center gap-1.5"><i class="fa-solid fa-check text-brand text-[10px]"></i> Cross-campus BEU & national mentors</li>
+                  <li class="flex items-center gap-1.5"><i class="fa-solid fa-check text-brand text-[10px]"></i> Boost your showcase on feed</li>
+                  <li class="flex items-center gap-1.5"><i class="fa-solid fa-check text-brand text-[10px]"></i> Credits never expire</li>
+                </ul>
+              </div>
+              <button onclick="startTopupCheckout(30, 99, '30 Credits Value Pack')" class="w-full py-2.5 bg-brand hover:bg-brand-dark text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center justify-center gap-1.5">
+                <span>Top Up for ₹99</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: SECURE PAYMENT CHECKOUT GATEWAY -->
+  <div id="modal-checkout" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-100 overflow-hidden">
+      <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-sm font-black">
+            <i class="fa-solid fa-lock"></i>
+          </div>
+          <div>
+            <h3 class="font-black text-slate-900 text-sm">Secure Payment Gateway</h3>
+            <p class="text-[10px] text-slate-400">Simulated Campus Payment Portal</p>
+          </div>
+        </div>
+        <button onclick="closeCheckoutModal()" class="text-slate-400 hover:text-slate-600 w-7 h-7 rounded-full hover:bg-slate-200 flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="checkout-form" onsubmit="processSimulatedPayment(event)" class="p-5 space-y-4 text-xs">
+        <div class="p-4 rounded-2xl bg-amber-50/60 border border-amber-200/80 space-y-2">
+          <div class="flex justify-between items-center text-slate-600">
+            <span>Item:</span>
+            <strong id="checkout-item-name" class="text-slate-900">10 Credits Starter Pack</strong>
+          </div>
+          <div class="flex justify-between items-center text-slate-600">
+            <span>Credits to be added:</span>
+            <span id="checkout-credits-badge" class="font-extrabold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-md text-[11px]">+10 🪙</span>
+          </div>
+          <div class="pt-2 border-t border-amber-200/60 flex justify-between items-center font-black text-sm text-slate-900">
+            <span>Total Payable:</span>
+            <span id="checkout-amount-display" class="text-base text-brand">₹49</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1.5">Select Payment Method</label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-brand bg-brand-50/30 cursor-pointer">
+              <input type="radio" name="pay-method" value="upi" checked class="text-brand focus:ring-brand">
+              <span class="font-bold text-slate-800">UPI / QR</span>
+            </label>
+            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 cursor-pointer">
+              <input type="radio" name="pay-method" value="card" class="text-brand focus:ring-brand">
+              <span class="font-bold text-slate-800">Card / NetBanking</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Student UPI ID or Phone</label>
+          <div class="relative">
+            <input type="text" id="checkout-upi-input" placeholder="e.g. student@okhdfcbank" value="ranjan@okhdfcbank" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-brand">
+            <span class="absolute right-3 top-2 text-[10px] text-emerald-600 font-bold">Verified ✓</span>
+          </div>
+        </div>
+
+        <div id="checkout-processing" class="hidden p-3 rounded-xl bg-slate-100 text-center space-y-1.5">
+          <div class="inline-block w-5 h-5 border-2 border-brand border-t-transparent rounded-full animate-spin"></div>
+          <p class="text-[11px] font-bold text-slate-700">Verifying transaction with banking network...</p>
+        </div>
+
+        <button type="submit" id="checkout-pay-btn" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-md transition flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-lock text-xs"></i>
+          <span id="checkout-btn-text">Pay ₹49 & Unlock Credits</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: AUTHENTICATION (Login / Register) -->
+  <div id="modal-auth" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+      <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+        <h3 class="font-black text-slate-900 text-base" id="auth-modal-title">Log In to AIKYA</h3>
+        <button onclick="closeAuthModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="px-5 pt-3 flex gap-4 border-b border-slate-100 text-xs font-bold">
+        <button id="auth-tab-login" onclick="switchAuthTab('login')" class="pb-2 border-b-2 border-brand text-brand">Log In</button>
+        <button id="auth-tab-register" onclick="switchAuthTab('register')" class="pb-2 border-b-2 border-transparent text-slate-400 hover:text-slate-600">Register</button>
+      </div>
+
+      <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="p-5 space-y-3.5 text-xs">
+        
+        <div id="auth-success-alert" class="hidden p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold">
+          Account created! Please enter your password to log in.
+        </div>
+
+        <div id="auth-register-fields" class="space-y-3 hidden">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Full Name</label>
+            <input type="text" id="reg-name" placeholder="e.g. Ranjan Kumar Ray" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl">
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">College / University</label>
+              <input type="text" id="reg-college" list="beu-colleges-datalist" placeholder="e.g. MIT Muzaffarpur (BEU)" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl">
+              <datalist id="beu-colleges-datalist">
+                <option value="Muzaffarpur Institute of Technology (MIT Muzaffarpur - BEU)">
+                <option value="Bhagalpur College of Engineering (BCE Bhagalpur - BEU)">
+                <option value="Bakhtiyarpur College of Engineering (BCE Patna - BEU)">
+                <option value="Nalanda College of Engineering (NCE Chandi - BEU)">
+                <option value="Darbhanga College of Engineering (DCE Darbhanga - BEU)">
+                <option value="Gaya College of Engineering (GCE Gaya - BEU)">
+                <option value="Motihari College of Engineering (MCE Motihari - BEU)">
+                <option value="Loknayak Jai Prakash Institute of Technology (LNJPIT Chapra - BEU)">
+                <option value="Shershah College of Engineering (SEC Sasaram - BEU)">
+                <option value="Sitamarhi Institute of Technology (SIT Sitamarhi - BEU)">
+                <option value="B.P. Mandal College of Engineering (BPMCE Madhepura - BEU)">
+                <option value="Government Engineering College (GEC Banka - BEU)">
+                <option value="Government Engineering College (GEC Vaishali - BEU)">
+                <option value="Government Engineering College (GEC Bhojpur - BEU)">
+                <option value="Government Engineering College (GEC Buxar - BEU)">
+                <option value="Government Engineering College (GEC Siwan - BEU)">
+                <option value="Government Engineering College (GEC Jamui - BEU)">
+                <option value="Government Engineering College (GEC Munger - BEU)">
+                <option value="IIT Delhi">
+                <option value="NIFT Delhi">
+                <option value="BITS Pilani">
+              </datalist>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Branch</label>
+              <input type="text" id="reg-branch" placeholder="CSE / ECE / Civil" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Email Address</label>
+          <input type="email" id="auth-email" required autocomplete="email" placeholder="student@college.edu" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Password</label>
+          <div class="relative">
+            <input type="password" id="auth-password" required minlength="8" autocomplete="current-password" placeholder="••••••••" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl">
+            <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-2.5 text-slate-400 font-bold">Show</button>
+          </div>
+        </div>
+
+        <button type="submit" id="auth-submit-btn" class="w-full py-2.5 bg-brand hover:bg-brand-dark text-white rounded-xl font-bold shadow-xs transition mt-2">
+          Log In
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: REQUEST SKILL EXCHANGE (10 Credits) -->
+  <div id="modal-request" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+      <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+        <div>
+          <h3 class="font-bold text-slate-900 text-sm sm:text-base">Request Skill Exchange</h3>
+          <span class="text-[11px] text-amber-700 font-semibold flex items-center gap-1 mt-0.5">
+            <span>🪙 Learning Fee: 10 Credits transferred to mentor</span>
+            <span class="text-slate-400">• Your Balance:</span>
+            <strong id="req-modal-credit-balance" class="text-slate-800">10</strong>
+          </span>
+        </div>
+        <button onclick="closeRequestModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form id="request-form" onsubmit="handleSendExchangeSubmit(event)" class="p-5 space-y-3.5 text-xs">
+        <input type="hidden" id="req-target-user-id">
+
+        <div class="p-3 bg-slate-50 rounded-xl flex items-center justify-between gap-3 border border-slate-200">
+          <div class="flex items-center gap-3">
+            <img id="req-modal-avatar" src="" class="w-10 h-10 rounded-lg object-cover">
+            <div>
+              <div id="req-modal-target-name" class="font-bold text-slate-900">Student</div>
+              <div id="req-modal-college" class="text-[11px] text-slate-500">College</div>
+            </div>
+          </div>
+          <span id="req-modal-campus-badge" class="text-[10px] font-extrabold px-2.5 py-1 rounded-lg">Campus Match</span>
+        </div>
+
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5">
+          <label class="block font-bold text-slate-700">Exchange Format:</label>
+          <div class="grid grid-cols-2 gap-2" id="req-format-container">
+            <label class="flex items-center gap-2 p-2 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-brand">
+              <input type="radio" name="exchange-mode" value="Offline" id="req-mode-offline" class="text-brand focus:ring-brand" checked>
+              <div>
+                <strong class="block text-slate-900 text-xs">📍 In-Person Meetup</strong>
+                <span class="text-[10px] text-slate-500">Campus library / cafeteria</span>
+              </div>
+            </label>
+            <label class="flex items-center gap-2 p-2 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-brand">
+              <input type="radio" name="exchange-mode" value="Online" id="req-mode-online" class="text-brand focus:ring-brand">
+              <div>
+                <strong class="block text-slate-900 text-xs">🌐 Virtual Session</strong>
+                <span class="text-[10px] text-slate-500">AIKYA Video Call Room</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">I can teach you:</label>
+            <select id="req-offered-skill" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"></select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">I want to learn:</label>
+            <select id="req-requested-skill" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"></select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Personalized Message & Preferred Time</label>
+          <textarea id="req-message" rows="3" required placeholder="I can teach you Python and would love to learn from you. Can we meet this weekend?" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"></textarea>
+        </div>
+
+        <div class="pt-2 flex items-center justify-between">
+          <div class="text-[11px] text-slate-500">
+            <strong class="text-amber-700 font-bold">10 🪙</strong> transferred to peer upon completion.
+          </div>
+          <div class="flex gap-2">
+            <button type="button" onclick="closeRequestModal()" class="px-4 py-2 font-bold text-slate-600 hover:bg-slate-100 rounded-xl">Cancel</button>
+            <button type="submit" class="px-5 py-2 font-bold text-white bg-brand hover:bg-brand-dark rounded-xl shadow-xs">Send Proposal</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: REWARDS & VOUCHER STORE -->
+  <div id="modal-rewards" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-3xl rounded-3xl shadow-2xl border border-slate-100 overflow-hidden max-h-[92vh] flex flex-col">
+      <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-emerald-600 to-teal-700 text-white">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl">
+            🎁
+          </div>
+          <div>
+            <h3 class="font-black text-base sm:text-lg">Skill Credit Voucher Rewards</h3>
+            <p class="text-[11px] text-emerald-100">Redeem credits earned by teaching peers on campus!</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="bg-black/20 px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5">
+            <span>🪙</span>
+            <span id="rewards-modal-credits">0</span>
+            <span class="text-[10px] text-emerald-200 font-semibold">Credits</span>
+          </div>
+          <button onclick="closeRewardsModal()" class="text-white/80 hover:text-white w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center transition">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+      <div class="p-6 overflow-y-auto flex-1 space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="rewards-voucher-catalog"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EDIT PROFILE & PHOTO SELECTOR -->
+  <div id="modal-edit-profile" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl shadow-xl border border-slate-100 overflow-hidden max-h-[90vh] overflow-y-auto">
+      <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+        <h3 class="font-bold text-slate-900 text-sm sm:text-base">Edit Profile & Photo</h3>
+        <button onclick="closeEditProfileModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="edit-profile-form" onsubmit="handleSaveProfile(event)" class="p-5 space-y-3.5 text-xs">
+        
+        <!-- Profile Picture Selector -->
+        <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2.5">
+          <label class="block font-bold text-slate-700">Profile Picture</label>
+          <div class="flex items-center gap-3.5">
+            <div class="relative group">
+              <img id="edit-avatar-preview" src="" alt="Profile Preview" class="w-16 h-16 rounded-2xl object-cover ring-2 ring-brand shadow-sm bg-white">
+              <div class="absolute inset-0 bg-black/30 rounded-2xl opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white pointer-events-none text-xs">
+                <i class="fa-solid fa-camera"></i>
+              </div>
+            </div>
+            <div class="flex-1 space-y-1.5">
+              <div class="flex items-center gap-2">
+                <label class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 hover:border-brand text-slate-700 hover:text-brand rounded-xl font-bold text-xs cursor-pointer shadow-xs transition">
+                  <i class="fa-solid fa-folder-open text-brand"></i>
+                  <span>Upload Image</span>
+                  <input type="file" id="edit-avatar-file-input" accept="image/*" onchange="handleAvatarFileChange(event)" class="hidden">
+                </label>
+                <button type="button" onclick="resetAvatarToDefault()" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-bold text-[11px] transition">
+                  Use Default
+                </button>
+              </div>
+              <input type="text" id="edit-avatar-url-input" placeholder="Or paste image URL..." oninput="handleAvatarUrlInput(this.value)" class="w-full px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-[11px]">
+            </div>
+          </div>
+          <input type="hidden" id="edit-avatar-data" value="">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Name</label>
+          <input type="text" id="edit-name" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">College</label>
+            <input type="text" id="edit-college" list="beu-colleges-datalist" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Branch</label>
+            <input type="text" id="edit-branch" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Bio</label>
+          <textarea id="edit-bio" rows="2" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"></textarea>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Skills You Can Teach (comma separated)</label>
+          <input type="text" id="edit-teach-skills" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Skills You Want to Learn (comma separated)</label>
+          <input type="text" id="edit-learn-skills" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl">
+        </div>
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeEditProfileModal()" class="px-4 py-2 font-bold text-slate-600">Cancel</button>
+          <button type="submit" class="px-5 py-2 font-bold text-white bg-brand rounded-xl">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: REVIEW & FEEDBACK -->
+  <div id="modal-review" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+      <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+        <h3 class="font-bold text-slate-900 text-sm sm:text-base">Give Rating & Feedback</h3>
+        <button onclick="closeReviewModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="review-form" onsubmit="handleReviewSubmit(event)" class="p-5 space-y-3.5 text-xs">
+        <input type="hidden" id="review-exchange-id">
+        <input type="hidden" id="review-student-id">
+        
+        <div class="text-center space-y-1">
+          <label class="block font-bold text-slate-700">Rate your exchange experience</label>
+          <div class="flex items-center justify-center gap-2 text-2xl" id="star-rating-selector">
+            <button type="button" onclick="setRatingValue(1)" class="star-btn text-amber-400">★</button>
+            <button type="button" onclick="setRatingValue(2)" class="star-btn text-amber-400">★</button>
+            <button type="button" onclick="setRatingValue(3)" class="star-btn text-amber-400">★</button>
+            <button type="button" onclick="setRatingValue(4)" class="star-btn text-amber-400">★</button>
+            <button type="button" onclick="setRatingValue(5)" class="star-btn text-amber-400">★</button>
+          </div>
+          <input type="hidden" id="selected-rating-value" value="5">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Feedback Comment</label>
+          <textarea id="review-comment" rows="3" required placeholder="Very helpful and explained concepts clearly." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"></textarea>
+        </div>
+
+        <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-xs flex items-center justify-center gap-1.5">
+          <span>Submit & Release 10 Credits</span>
+          <span>🪙</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: CREATE POST -->
+  <div id="modal-create-post" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+      <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+        <h3 class="font-bold text-slate-900 text-sm sm:text-base">Showcase a Skill</h3>
+        <button onclick="closeCreatePostModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="create-post-form" onsubmit="handleCreatePostSubmit(event)" class="p-5 space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Title</label>
+          <input type="text" id="post-title" required placeholder="e.g. Arduino Automation Demo" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Skill</label>
+          <input type="text" id="post-skill" required placeholder="e.g. IoT & C++" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Description</label>
+          <textarea id="post-desc" rows="3" required placeholder="Describe what you built and what you can teach peers..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"></textarea>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Media Image URL (Optional)</label>
+          <input type="text" id="post-media" placeholder="https://..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl">
+        </div>
+        <button type="submit" class="w-full py-2 bg-brand text-white font-bold rounded-xl shadow-xs">Publish Showcase</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================================
+       AIKYA DATABASE ENGINE & PEER EXCHANGE PLATFORM
+       ========================================================================= */
+    const DB_KEYS = {
+      USERS: 'aikya_users_clean',
+      POSTS: 'aikya_posts_clean',
+      REQUESTS: 'aikya_requests_clean',
+      REVIEWS: 'aikya_reviews_clean',
+      MESSAGES: 'aikya_messages_clean',
+      CREDIT_LOGS: 'aikya_credit_logs_clean',
+      VOUCHERS: 'aikya_vouchers_clean',
+      AUTH_TOKEN: 'aikya_token_clean',
+      CURRENT_UID: 'aikya_uid_clean'
+    };
+
+    function getDefaultAvatar(name = 'Student') {
+      const cleanName = (name || 'Student').trim();
+      return `https://ui-avatars.com/api/?name=${encodeURIComponent(cleanName)}&background=4F46E5&color=ffffff&bold=true&size=256`;
+    }
+
+    const VOUCHER_CATALOG = [
+      {
+        id: 'v_spotify',
+        name: 'Spotify Premium (3 Months)',
+        brand: 'Spotify',
+        icon: 'fa-brands fa-spotify text-emerald-500',
+        bg: 'bg-emerald-50 border-emerald-200',
+        creditsCost: 250,
+        desc: 'Ad-free listening, offline downloads, and high-fidelity student playback.',
+        category: 'Entertainment'
+      },
+      {
+        id: 'v_gplay',
+        name: 'Google Play Pass / ₹250 Card',
+        brand: 'Google Play',
+        icon: 'fa-brands fa-google-play text-blue-500',
+        bg: 'bg-blue-50 border-blue-200',
+        creditsCost: 200,
+        desc: 'Access 1,000+ premium apps, coding toolkits, and games with zero ads.',
+        category: 'Apps & Tools'
+      },
+      {
+        id: 'v_domain',
+        name: '1-Yr Custom Domain (.tech / .dev)',
+        brand: 'Domain Registry',
+        icon: 'fa-solid fa-globe text-indigo-500',
+        bg: 'bg-indigo-50 border-indigo-200',
+        creditsCost: 350,
+        desc: 'Launch your personal portfolio or project with a custom student domain voucher.',
+        category: 'Developer'
+      },
+      {
+        id: 'v_cafe',
+        name: 'Campus Cafe Voucher (₹150)',
+        brand: 'Campus Cafe',
+        icon: 'fa-solid fa-mug-hot text-amber-500',
+        bg: 'bg-amber-50 border-amber-200',
+        creditsCost: 120,
+        desc: 'Enjoy a free hot brew or snack at your campus cafeteria or coffee lounge.',
+        category: 'Lifestyle'
+      }
+    ];
+
+    const BEU_COLLEGES = [
+      "MIT Muzaffarpur (BEU)", "BCE Bhagalpur (BEU)", "BCE Patna (BEU)", "NCE Chandi (BEU)",
+      "DCE Darbhanga (BEU)", "GCE Gaya (BEU)", "MCE Motihari (BEU)", "LNJPIT Chapra (BEU)",
+      "SEC Sasaram (BEU)", "SIT Sitamarhi (BEU)", "BPMCE Madhepura (BEU)", "KEC Katihar (BEU)",
+      "PCE Purnea (BEU)", "SCE Saharsa (BEU)", "SCE Supaul (BEU)", "RRSDCE Begusarai (BEU)",
+      "SPNREC Araria (BEU)", "GEC Vaishali (BEU)", "GEC Bhojpur (BEU)", "GEC Buxar (BEU)",
+      "GEC Siwan (BEU)", "GEC Gopalganj (BEU)", "GEC Aurangabad (BEU)", "GEC Nawada (BEU)",
+      "GEC Jehanabad (BEU)", "GEC Arwal (BEU)", "GEC Jamui (BEU)", "GEC Banka (BEU)",
+      "GEC Munger (BEU)", "GEC Lakhisarai (BEU)", "GEC Sheikhpura (BEU)", "GEC Khagaria (BEU)",
+      "GEC Samastipur (BEU)", "GEC Madhubani (BEU)", "GEC Sheohar (BEU)", "GEC West Champaran (BEU)",
+      "GEC Kaimur (BEU)", "GEC Kishanganj (BEU)"
+    ];
+
+    // Production mode: never preload fictional students, posts, messages, or transactions.
+
+    function initializeDatabase() {
+      // Clear legacy browser-side demo data. The server/database is the source of truth.
+      [DB_KEYS.USERS, DB_KEYS.POSTS, DB_KEYS.REQUESTS, DB_KEYS.REVIEWS,
+       DB_KEYS.MESSAGES, DB_KEYS.CREDIT_LOGS, DB_KEYS.VOUCHERS, 'aikya_ver']
+        .forEach(key => localStorage.removeItem(key));
+      [DB_KEYS.USERS, DB_KEYS.POSTS, DB_KEYS.REQUESTS, DB_KEYS.REVIEWS,
+       DB_KEYS.MESSAGES, DB_KEYS.CREDIT_LOGS, DB_KEYS.VOUCHERS]
+        .forEach(key => localStorage.setItem(key, '[]'));
+      localStorage.removeItem(DB_KEYS.CURRENT_UID);
+      localStorage.removeItem(DB_KEYS.AUTH_TOKEN);
+    }
+
+    const db = {
+      getUsers: () => JSON.parse(localStorage.getItem(DB_KEYS.USERS) || '[]'),
+      saveUsers: (data) => localStorage.setItem(DB_KEYS.USERS, JSON.stringify(data)),
+      getPosts: () => JSON.parse(localStorage.getItem(DB_KEYS.POSTS) || '[]'),
+      savePosts: (data) => localStorage.setItem(DB_KEYS.POSTS, JSON.stringify(data)),
+      getRequests: () => JSON.parse(localStorage.getItem(DB_KEYS.REQUESTS) || '[]'),
+      saveRequests: (data) => localStorage.setItem(DB_KEYS.REQUESTS, JSON.stringify(data)),
+      getReviews: () => JSON.parse(localStorage.getItem(DB_KEYS.REVIEWS) || '[]'),
+      saveReviews: (data) => localStorage.setItem(DB_KEYS.REVIEWS, JSON.stringify(data)),
+      getMessages: () => JSON.parse(localStorage.getItem(DB_KEYS.MESSAGES) || '[]'),
+      saveMessages: (data) => localStorage.setItem(DB_KEYS.MESSAGES, JSON.stringify(data)),
+      getCreditLogs: () => JSON.parse(localStorage.getItem(DB_KEYS.CREDIT_LOGS) || '[]'),
+      saveCreditLogs: (data) => localStorage.setItem(DB_KEYS.CREDIT_LOGS, JSON.stringify(data)),
+      getVouchers: () => JSON.parse(localStorage.getItem(DB_KEYS.VOUCHERS) || '[]'),
+      saveVouchers: (data) => localStorage.setItem(DB_KEYS.VOUCHERS, JSON.stringify(data)),
+      getCurrentUserId: () => localStorage.getItem(DB_KEYS.CURRENT_UID),
+      setCurrentUserId: (id) => localStorage.setItem(DB_KEYS.CURRENT_UID, id),
+      getAuthToken: () => localStorage.getItem(DB_KEYS.AUTH_TOKEN),
+      setAuthToken: (token) => localStorage.setItem(DB_KEYS.AUTH_TOKEN, token),
+      clearAuth: () => {
+        localStorage.removeItem(DB_KEYS.AUTH_TOKEN);
+        localStorage.removeItem(DB_KEYS.CURRENT_UID);
+      }
+    };
+
+    function resetDemoData() {
+      localStorage.clear();
+      initializeDatabase();
+      showToast('Local cache cleared.', 'success');
+      setTimeout(() => location.reload(), 400);
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      const styles = {
+        success: 'bg-emerald-600 text-white shadow-emerald-900/20',
+        error: 'bg-rose-600 text-white shadow-rose-900/20',
+        amber: 'bg-amber-600 text-white shadow-amber-900/20',
+        info: 'bg-slate-900 text-white shadow-slate-900/20'
+      };
+
+      toast.className = `${styles[type] || styles.info} pointer-events-auto px-4 py-3 rounded-2xl shadow-lg text-xs font-bold transition-all duration-300 transform translate-y-2 opacity-0 flex items-center gap-2 border border-white/10`;
+      toast.innerHTML = message;
+      container.appendChild(toast);
+
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-1');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    let currentUser = null;
+    let activeChatPartnerId = null;
+    let currentActiveView = 'landing';
+    let currentRequestTab = 'received';
+    let navHistoryStack = ['landing'];
+
+    /* =========================================================================
+       VIDEO CONFERENCING ENGINE
+       ========================================================================= */
+    let localStream = null;
+    let isAudioMuted = false;
+    let isVideoStopped = false;
+    let isScreenSharing = false;
+    let callTimerInterval = null;
+    let callDurationSeconds = 0;
+    let activeCallPartner = null;
+    let activeCallExchangeId = null;
+
+    async function startVideoCallDirect(peerId, topic = 'Skill Mentorship') {
+      const users = db.getUsers();
+      const peer = users.find(u => u.id === peerId);
+      if (peer) openVideoCallModal(peer, topic);
+    }
+
+    function startVideoCallFromChat() {
+      if (!activeChatPartnerId) {
+        showToast('Please select a conversation first.', 'amber');
+        return;
+      }
+      const users = db.getUsers();
+      const peer = users.find(u => u.id === activeChatPartnerId);
+      if (peer) openVideoCallModal(peer, '1-on-1 Online Exchange');
+    }
+
+    function launchVideoCallForExchange(exchangeId, peerId, skillName) {
+      activeCallExchangeId = exchangeId;
+      const users = db.getUsers();
+      const peer = users.find(u => u.id === peerId);
+      if (peer) openVideoCallModal(peer, `${skillName} Session`);
+    }
+
+    async function openVideoCallModal(peer, sessionTopic) {
+      if (!currentUser) checkAuthSession();
+      if (!currentUser) {
+        openAuthModal('login');
+        return;
+      }
+
+      activeCallPartner = peer;
+      document.getElementById('call-room-title').innerText = sessionTopic || 'Virtual Skill Session';
+      document.getElementById('call-partner-name').innerText = peer.name;
+      document.getElementById('call-peer-display-name').innerText = peer.name;
+      document.getElementById('call-peer-college-label').innerText = `${peer.college} • ${peer.branch || 'Student'}`;
+      document.getElementById('call-peer-tag-name').innerText = peer.skillsToTeach[0] || 'Peer Mentor';
+      document.getElementById('call-peer-avatar').src = peer.avatar;
+
+      isAudioMuted = false;
+      isVideoStopped = false;
+      isScreenSharing = false;
+      updateCallControlButtons();
+
+      try {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+          const localVideo = document.getElementById('call-local-video');
+          if (localVideo) {
+            localVideo.srcObject = localStream;
+            localVideo.classList.remove('hidden');
+            document.getElementById('call-local-placeholder').classList.add('hidden');
+          }
+        }
+      } catch (err) {
+        console.warn('Camera access unavailable:', err);
+        document.getElementById('call-local-placeholder').classList.remove('hidden');
+        document.getElementById('call-local-video').classList.add('hidden');
+      }
+
+      clearInterval(callTimerInterval);
+      callDurationSeconds = 0;
+      updateCallTimerDisplay();
+      callTimerInterval = setInterval(() => {
+        callDurationSeconds++;
+        updateCallTimerDisplay();
+      }, 1000);
+
+      document.getElementById('modal-video-call').classList.remove('hidden');
+      showToast(`Connected to virtual room with <strong>${peer.name}</strong> 📹`, 'success');
+    }
+
+    function updateCallTimerDisplay() {
+      const min = Math.floor(callDurationSeconds / 60);
+      const sec = callDurationSeconds % 60;
+      const el = document.getElementById('call-duration-timer');
+      if (el) el.innerText = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+    }
+
+    function toggleCallAudio() {
+      isAudioMuted = !isAudioMuted;
+      if (localStream) localStream.getAudioTracks().forEach(t => t.enabled = !isAudioMuted);
+      updateCallControlButtons();
+      showToast(isAudioMuted ? 'Microphone Muted 🔇' : 'Microphone Active 🎙️', 'info');
+    }
+
+    function toggleCallVideo() {
+      isVideoStopped = !isVideoStopped;
+      const localVideo = document.getElementById('call-local-video');
+      const placeholder = document.getElementById('call-local-placeholder');
+      if (localStream) localStream.getVideoTracks().forEach(t => t.enabled = !isVideoStopped);
+
+      if (isVideoStopped) {
+        if (localVideo) localVideo.classList.add('hidden');
+        if (placeholder) placeholder.classList.remove('hidden');
+      } else {
+        if (localVideo) localVideo.classList.remove('hidden');
+        if (placeholder) placeholder.classList.add('hidden');
+      }
+      updateCallControlButtons();
+    }
+
+    function toggleCallScreenShare() {
+      isScreenSharing = !isScreenSharing;
+      const shareView = document.getElementById('call-screenshare-view');
+      const peerStream = document.getElementById('call-peer-stream');
+      if (isScreenSharing) {
+        shareView.classList.remove('hidden');
+        shareView.classList.add('flex');
+        peerStream.classList.add('hidden');
+        showToast('Screen Sharing started 🖥️', 'success');
+      } else {
+        shareView.classList.add('hidden');
+        shareView.classList.remove('flex');
+        peerStream.classList.remove('hidden');
+        showToast('Screen Sharing stopped', 'info');
+      }
+      updateCallControlButtons();
+    }
+
+    function toggleRaiseHand() {
+      const btn = document.getElementById('btn-call-hand');
+      const isRaised = btn.classList.contains('bg-amber-500');
+      if (isRaised) {
+        btn.className = 'px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition flex items-center gap-1.5';
+        showToast('Hand lowered.', 'info');
+      } else {
+        btn.className = 'px-3 py-2 rounded-xl bg-amber-500 text-slate-950 text-xs font-black transition flex items-center gap-1.5 shadow-md';
+        showToast('✋ You raised your hand!', 'amber');
+      }
+    }
+
+    function toggleCallNotesDrawer() {
+      const drawer = document.getElementById('call-notes-drawer');
+      drawer.classList.toggle('hidden');
+      drawer.classList.toggle('flex');
+    }
+
+    function updateCallControlButtons() {
+      const btnAudio = document.getElementById('btn-call-audio');
+      const btnVideo = document.getElementById('btn-call-video');
+      if (btnAudio) {
+        btnAudio.className = isAudioMuted ? 'w-11 h-11 rounded-2xl bg-rose-600 text-white flex items-center justify-center' : 'w-11 h-11 rounded-2xl bg-slate-800 text-white flex items-center justify-center';
+        btnAudio.innerHTML = isAudioMuted ? '<i class="fa-solid fa-microphone-slash"></i>' : '<i class="fa-solid fa-microphone"></i>';
+      }
+      if (btnVideo) {
+        btnVideo.className = isVideoStopped ? 'w-11 h-11 rounded-2xl bg-rose-600 text-white flex items-center justify-center' : 'w-11 h-11 rounded-2xl bg-slate-800 text-white flex items-center justify-center';
+        btnVideo.innerHTML = isVideoStopped ? '<i class="fa-solid fa-video-slash"></i>' : '<i class="fa-solid fa-video"></i>';
+      }
+    }
+
+    function handleSendCallMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('call-chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const container = document.getElementById('call-chat-stream');
+      const bubble = document.createElement('div');
+      bubble.className = 'p-2 rounded-xl bg-brand/20 border border-brand/30 text-white text-[11px]';
+      bubble.innerHTML = `<div class="flex justify-between text-[10px] text-brand-light font-bold mb-0.5"><span>You</span><span>${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span></div><p>${text}</p>`;
+      container.appendChild(bubble);
+      input.value = '';
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function endVideoCall(promptReview = false) {
+      clearInterval(callTimerInterval);
+      if (localStream) {
+        localStream.getTracks().forEach(t => t.stop());
+        localStream = null;
+      }
+      document.getElementById('modal-video-call').classList.add('hidden');
+      showToast('Video call session ended.', 'info');
+      if (promptReview && activeCallPartner) {
+        openReviewModal(activeCallExchangeId || 'call_' + Date.now(), activeCallPartner.id);
+      }
+      activeCallExchangeId = null;
+    }
+
+    function concludeAndTransferCallCredits() {
+      if (!activeCallPartner) return;
+      const partner = activeCallPartner;
+      const exId = activeCallExchangeId;
+      endVideoCall(false);
+
+      if (exId) {
+        const reqs = db.getRequests();
+        const r = reqs.find(item => item.id === exId);
+        if (r) {
+          r.status = 'Completed';
+          db.saveRequests(reqs);
+        }
+      }
+
+      const users = db.getUsers();
+      const mentor = users.find(u => u.id === partner.id);
+      if (mentor) {
+        mentor.credits = (mentor.credits || 0) + 10;
+        recordCreditTransaction(mentor.id, `Received 10 Credits from ${currentUser.name}`, 10, 'credit');
+        db.saveUsers(users);
+      }
+
+      showToast(`🎉 10 Skill Credits transferred to <strong>${partner.name}</strong>!`, 'success');
+      openReviewModal(exId || 'call_' + Date.now(), partner.id);
+    }
+
+    function getViewDisplayName(viewId) {
+      const labels = {
+        landing: 'Home',
+        explore: 'Explore Skills',
+        exchange: 'Skill Matches',
+        showcase: 'Showcase Feed',
+        profile: 'Student Profile',
+        dashboard: 'Dashboard',
+        messages: 'Messages',
+        admin: 'Admin Portal'
+      };
+      return labels[viewId] || 'Previous Page';
+    }
+
+    function updateAllBackButtons() {
+      const prev = navHistoryStack.length > 0 ? navHistoryStack[navHistoryStack.length - 1] : 'landing';
+      const label = `Back to ${getViewDisplayName(prev)}`;
+      document.querySelectorAll('.nav-back-label').forEach(el => el.innerText = label);
+      const profEl = document.getElementById('profile-back-btn-text');
+      if (profEl) profEl.innerText = label;
+    }
+
+    function goBackGlobal() {
+      const prev = navHistoryStack.length > 0 ? navHistoryStack.pop() : 'landing';
+      navigateTo(prev, false);
+    }
+
+    function goBackFromProfile() {
+      goBackGlobal();
+    }
+
+    function navigateTo(viewId, recordHistory = true) {
+      if (recordHistory && currentActiveView && currentActiveView !== viewId) {
+        navHistoryStack.push(currentActiveView);
+      }
+      currentActiveView = viewId;
+
+      document.querySelectorAll('.view-panel').forEach(p => {
+        p.classList.add('hidden');
+        p.classList.remove('block');
+      });
+
+      const target = document.getElementById(`view-${viewId}`);
+      if (target) {
+        target.classList.remove('hidden');
+        target.classList.add('block');
+      }
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        if (btn.dataset.target === viewId) {
+          btn.classList.add('text-brand', 'bg-brand-50/90');
+          btn.classList.remove('text-slate-600');
+        } else {
+          btn.classList.remove('text-brand', 'bg-brand-50/90');
+          btn.classList.add('text-slate-600');
+        }
+      });
+
+      updateAllBackButtons();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (viewId === 'explore') renderExploreGrid();
+      if (viewId === 'exchange') renderSmartMatches();
+      if (viewId === 'showcase') renderShowcaseFeed();
+      if (viewId === 'dashboard') renderDashboard();
+      if (viewId === 'messages') renderMessagesView();
+      if (viewId === 'admin') renderAdminView();
+    }
+
+    function toggleMobileMenu() {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+    }
+
+    /* Auth & Session State */
+    function checkAuthSession() {
+      const token = db.getAuthToken();
+      const uid = db.getCurrentUserId();
+      const users = db.getUsers();
+
+      if (token && uid) {
+        currentUser = users.find(u => u.id === uid) || users[0];
+        if (currentUser.credits === undefined) currentUser.credits = 10;
+        
+        // Auto-heal missing or broken local file paths to a reliable live student avatar
+        if (!currentUser.avatar || currentUser.avatar.includes('WhatsApp') || currentUser.avatar.endsWith('.jpg') && !currentUser.avatar.startsWith('http') && !currentUser.avatar.startsWith('data:')) {
+          currentUser.avatar = 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=200&auto=format&fit=crop&q=80';
+        }
+
+        document.getElementById('auth-logged-out').classList.add('hidden');
+        document.getElementById('auth-logged-in').classList.remove('hidden');
+        document.getElementById('auth-logged-in').classList.add('flex');
+        
+        document.getElementById('nav-dashboard-link').classList.remove('hidden');
+        document.getElementById('nav-messages-link').classList.remove('hidden');
+        document.getElementById('nav-credits-pill').classList.remove('hidden');
+        document.getElementById('nav-credits-pill').classList.add('flex');
+
+        document.getElementById('header-avatar').src = currentUser.avatar;
+        document.getElementById('header-user-name').innerText = currentUser.name;
+        document.getElementById('header-user-badge').innerText = currentUser.verified ? 'Verified ✓' : 'Student';
+        document.getElementById('header-credits-count').innerText = currentUser.credits;
+      } else {
+        currentUser = null;
+        document.getElementById('auth-logged-out').classList.remove('hidden');
+        document.getElementById('auth-logged-in').classList.add('hidden');
+        document.getElementById('auth-logged-in').classList.remove('flex');
+        document.getElementById('nav-dashboard-link').classList.add('hidden');
+        document.getElementById('nav-messages-link').classList.add('hidden');
+        document.getElementById('nav-credits-pill').classList.add('hidden');
+      }
+    }
+
+    /* Voucher Store */
+    function openRewardsModal() {
+      if (!currentUser) checkAuthSession();
+      if (!currentUser) {
+        openAuthModal('login');
+        return;
+      }
+      document.getElementById('rewards-modal-credits').innerText = currentUser.credits || 0;
+      const container = document.getElementById('rewards-voucher-catalog');
+
+      container.innerHTML = VOUCHER_CATALOG.map(v => {
+        const canAfford = (currentUser.credits || 0) >= v.creditsCost;
+        return `
+          <div class="rounded-2xl border p-4 ${v.bg} flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <i class="${v.icon} text-lg"></i>
+                  <span class="text-[10px] font-black uppercase text-slate-500 tracking-wider">${v.brand}</span>
+                </div>
+                <span class="text-xs font-black bg-white/80 border border-slate-200 px-2 py-0.5 rounded-lg text-amber-700">
+                  ${v.creditsCost} 🪙
+                </span>
+              </div>
+              <h4 class="font-extrabold text-sm text-slate-900 mt-1">${v.name}</h4>
+              <p class="text-[11px] text-slate-600 mt-1 leading-relaxed">${v.desc}</p>
+            </div>
+            <button onclick="redeemVoucherReward('${v.id}')" ${!canAfford ? 'disabled' : ''} class="w-full py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${canAfford ? 'bg-slate-900 hover:bg-slate-800 text-white shadow-xs' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}">
+              <i class="fa-solid fa-gift"></i>
+              <span>${canAfford ? `Redeem for ${v.creditsCost} Credits` : `Need ${v.creditsCost - currentUser.credits} More Credits`}</span>
+            </button>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('modal-rewards').classList.remove('hidden');
+    }
+
+    function closeRewardsModal() {
+      document.getElementById('modal-rewards').classList.add('hidden');
+    }
+
+    function redeemVoucherReward(voucherId) {
+      if (!currentUser) return;
+      const v = VOUCHER_CATALOG.find(i => i.id === voucherId);
+      if (!v || (currentUser.credits || 0) < v.creditsCost) return;
+
+      const users = db.getUsers();
+      const u = users.find(usr => usr.id === currentUser.id);
+      if (u) {
+        const code = 'AIKYA-' + v.brand.substring(0, 4).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+        u.credits -= v.creditsCost;
+        recordCreditTransaction(u.id, `Redeemed Voucher: ${v.name}`, v.creditsCost, 'debit');
+
+        const vouchers = db.getVouchers();
+        vouchers.unshift({
+          id: 'vclaim_' + Date.now(),
+          userId: u.id,
+          name: v.name,
+          icon: v.icon,
+          code,
+          claimedAt: new Date().toLocaleDateString(),
+          cost: v.creditsCost
+        });
+
+        db.saveVouchers(vouchers);
+        db.saveUsers(users);
+        currentUser = u;
+        checkAuthSession();
+        showToast(`Claimed ${v.name}! Code saved to vault.`, 'success');
+        openRewardsModal();
+        if (currentActiveView === 'dashboard') renderDashboard();
+      }
+    }
+
+    function copyVoucherCode(code) {
+      const inp = document.createElement('input');
+      inp.value = code;
+      document.body.appendChild(inp);
+      inp.select();
+      document.execCommand('copy');
+      inp.remove();
+      showToast(`Copied voucher code: ${code} 📋`, 'success');
+    }
+
+    /* Top-Up Plans & Checkout */
+    let pendingOrder = null;
+
+    function openPlansModal() {
+      if (!currentUser) checkAuthSession();
+      if (currentUser) {
+        const credElem = document.getElementById('modal-user-credits');
+        if (credElem) credElem.innerText = currentUser.credits || 0;
+      }
+      document.getElementById('modal-plans').classList.remove('hidden');
+    }
+
+    function closePlansModal() {
+      document.getElementById('modal-plans').classList.add('hidden');
+    }
+
+    function startTopupCheckout(creditAmount, price, packLabel) {
+      if (!currentUser) {
+        openAuthModal('login');
+        return;
+      }
+      pendingOrder = { credits: creditAmount, price, itemName: packLabel };
+      document.getElementById('checkout-item-name').innerText = packLabel;
+      document.getElementById('checkout-credits-badge').innerText = `+${creditAmount} 🪙`;
+      document.getElementById('checkout-amount-display').innerText = `₹${price}`;
+      document.getElementById('checkout-btn-text').innerText = `Pay ₹${price} & Unlock Credits`;
+      document.getElementById('checkout-processing').classList.add('hidden');
+      document.getElementById('checkout-pay-btn').disabled = false;
+      document.getElementById('modal-checkout').classList.remove('hidden');
+    }
+
+    function closeCheckoutModal() {
+      document.getElementById('modal-checkout').classList.add('hidden');
+      pendingOrder = null;
+    }
+
+    function processSimulatedPayment(e) {
+      e.preventDefault();
+      if (!pendingOrder || !currentUser) return;
+      const btn = document.getElementById('checkout-pay-btn');
+      btn.disabled = true;
+      document.getElementById('checkout-processing').classList.remove('hidden');
+
+      setTimeout(() => {
+        const users = db.getUsers();
+        const u = users.find(usr => usr.id === currentUser.id);
+        if (u && pendingOrder) {
+          u.credits = (u.credits || 0) + pendingOrder.credits;
+          recordCreditTransaction(u.id, `Top-Up: ${pendingOrder.itemName} (₹${pendingOrder.price})`, pendingOrder.credits, 'credit');
+          showToast(`🪙 Payment verified! +${pendingOrder.credits} Credits added.`, 'success');
+          db.saveUsers(users);
+          currentUser = u;
+          checkAuthSession();
+          closeCheckoutModal();
+          closePlansModal();
+          if (currentActiveView === 'dashboard') renderDashboard();
+          if (currentActiveView === 'explore') renderExploreGrid();
+        }
+      }, 1000);
+    }
+
+    function recordCreditTransaction(userId, title, amount, type = 'credit') {
+      const logs = db.getCreditLogs();
+      logs.unshift({
+        id: 'log_' + Date.now(),
+        userId,
+        title,
+        amount: (type === 'credit' ? '+' : '-') + amount + ' 🪙',
+        type,
+        date: 'Just now'
+      });
+      db.saveCreditLogs(logs);
+    }
+
+    /* Auth modal toggling */
+    function openAuthModal(tab = 'login') {
+      document.getElementById('modal-auth').classList.remove('hidden');
+      switchAuthTab(tab);
+    }
+
+    function closeAuthModal() {
+      document.getElementById('modal-auth').classList.add('hidden');
+    }
+
+    function switchAuthTab(tab) {
+      const isLogin = tab === 'login';
+      document.getElementById('auth-modal-title').innerText = isLogin ? 'Log In to AIKYA' : 'Create Student Account';
+      document.getElementById('auth-submit-btn').innerText = isLogin ? 'Log In' : 'Register';
+      
+      const loginTab = document.getElementById('auth-tab-login');
+      const regTab = document.getElementById('auth-tab-register');
+      const regFields = document.getElementById('auth-register-fields');
+
+      if (isLogin) {
+        loginTab.className = 'pb-2 border-b-2 border-brand text-brand';
+        regTab.className = 'pb-2 border-b-2 border-transparent text-slate-400 hover:text-slate-600';
+        regFields.classList.add('hidden');
+      } else {
+        regTab.className = 'pb-2 border-b-2 border-brand text-brand';
+        loginTab.className = 'pb-2 border-b-2 border-transparent text-slate-400 hover:text-slate-600';
+        regFields.classList.remove('hidden');
+      }
+    }
+
+    function togglePasswordVisibility() {
+      const p = document.getElementById('auth-password');
+      p.type = p.type === 'password' ? 'text' : 'password';
+    }
+
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('auth-email').value.trim().toLowerCase();
+      const password = document.getElementById('auth-password').value;
+      const isLogin = document.getElementById('auth-tab-login').classList.contains('border-brand');
+      const submitButton = document.getElementById('auth-submit-btn');
+      if (!email || !password) {
+        showToast('Enter your email and password.', 'error');
+        return;
+      }
+      submitButton.disabled = true;
+      const originalLabel = submitButton.innerText;
+      submitButton.innerText = isLogin ? 'Logging in…' : 'Creating account…';
+      try {
+        let response;
+        if (isLogin) {
+          response = await fetch('/api/auth/login', {
+            method: 'POST', credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+          });
+        } else {
+          const name = document.getElementById('reg-name').value.trim() || 'Student User';
+          const college = document.getElementById('reg-college').value.trim() || 'Campus';
+          const branch = document.getElementById('reg-branch').value.trim() || 'Engineering';
+          response = await fetch('/api/auth/register', {
+            method: 'POST', credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password, name, college, branch })
+          });
+        }
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.detail || 'Authentication failed.');
+        aikyaAuthenticated = true;
+        await hydrateBackendState(true);
+        const user = payload.user || payload;
+        const users = db.getUsers();
+        const savedUser = users.find(u => u.id === user.id) || user;
+        if (!users.some(u => u.id === savedUser.id)) users.push(savedUser);
+        db.saveUsers(users);
+        db.setCurrentUserId(savedUser.id);
+        // This marker is not a credential; the real session is an HttpOnly cookie.
+        db.setAuthToken('server-session');
+        currentUser = savedUser;
+        checkAuthSession();
+        closeAuthModal();
+        showToast(isLogin ? `Welcome back, ${savedUser.name}! 👋` : `Welcome to AIKYA, ${savedUser.name}! 🎉`, 'success');
+        navigateTo('dashboard');
+      } catch (err) {
+        showToast(err.message || 'Could not connect to the local backend. Is it running?', 'error');
+      } finally {
+        submitButton.disabled = false;
+        submitButton.innerText = originalLabel;
+      }
+    }
+
+    async function handleLogout() {
+      try { await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' }); } catch (_) {}
+      aikyaAuthenticated = false;
+      db.clearAuth();
+      clearPrivateLocalCache();
+      currentUser = null;
+      checkAuthSession();
+      showToast('Logged out successfully.');
+      navigateTo('landing');
+    }
+
+    /* Matching Synergy */
+    function calculateSkillSynergy(userA, userB) {
+      if (!userA || !userB || userA.id === userB.id) return { score: 0 };
+      const aTeach = (userA.skillsToTeach || []).map(s => s.toLowerCase());
+      const aLearn = (userA.skillsToLearn || []).map(s => s.toLowerCase());
+      const bTeach = (userB.skillsToTeach || []).map(s => s.toLowerCase());
+      const bLearn = (userB.skillsToLearn || []).map(s => s.toLowerCase());
+
+      const m1 = aTeach.some(s => bLearn.some(bl => bl.includes(s) || s.includes(bl)));
+      const m2 = bTeach.some(s => aLearn.some(al => al.includes(s) || s.includes(al)));
+
+      if (m1 && m2) return { score: 95 };
+      if (m1 || m2) return { score: 80 };
+      return { score: 65 };
+    }
+
+    function renderExploreGrid() {
+      const users = db.getUsers();
+      const grid = document.getElementById('explore-students-grid');
+      const emptyState = document.getElementById('explore-empty-state');
+      const search = (document.getElementById('explore-search')?.value || '').toLowerCase();
+      const category = document.getElementById('explore-category')?.value || 'all';
+      const level = document.getElementById('explore-level')?.value || 'all';
+      const verifiedOnly = document.getElementById('explore-verified')?.checked || false;
+
+      updateCategoryCounts(users);
+
+      const filtered = users.filter(u => {
+        const matchesSearch = !search || 
+          u.name.toLowerCase().includes(search) || 
+          u.college.toLowerCase().includes(search) || 
+          u.skillsToTeach.some(s => s.toLowerCase().includes(search)) ||
+          u.skillsToLearn.some(s => s.toLowerCase().includes(search));
+
+        const matchesCat = category === 'all' || u.category === category;
+        const matchesLevel = level === 'all' || u.skillLevel === level;
+        const matchesVerified = !verifiedOnly || u.verified;
+
+        return matchesSearch && matchesCat && matchesLevel && matchesVerified;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+
+      const categoryColors = {
+        Programming: 'bg-indigo-50/80 text-indigo-700 border-indigo-200/80',
+        Design: 'bg-sky-50/80 text-sky-700 border-sky-200/80',
+        Media: 'bg-amber-50/80 text-amber-700 border-amber-200/80',
+        Music: 'bg-violet-50/80 text-violet-700 border-violet-200/80',
+        Dance: 'bg-pink-50/80 text-pink-700 border-pink-200/80',
+        SoftSkills: 'bg-teal-50/80 text-teal-700 border-teal-200/80',
+        Academics: 'bg-blue-50/80 text-blue-700 border-blue-200/80'
+      };
+
+      grid.innerHTML = filtered.map(u => `
+        <div class="glass-card rounded-3xl p-5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-start justify-between">
+              <div class="flex items-center gap-3">
+                <img src="${u.avatar}" class="w-12 h-12 rounded-2xl object-cover ring-2 ring-white shadow-xs bg-white" onerror="this.onerror=null; this.src=getDefaultAvatar('${u.name}');">
+                <div>
+                  <h3 class="font-bold text-slate-900 text-sm">${u.name}</h3>
+                  <div class="text-[11px] text-slate-500 line-clamp-1">${u.college}</div>
+                  <div class="flex items-center gap-1.5 mt-1 flex-wrap">
+                    <span class="text-[9px] font-bold px-2 py-0.5 rounded-md border ${categoryColors[u.category] || 'bg-slate-100 text-slate-700'}">${u.category}</span>
+                    ${u.verified ? '<span class="text-[10px] text-secondary-dark font-bold">Verified ✓</span>' : ''}
+                  </div>
+                </div>
+              </div>
+              <span class="text-amber-500 text-xs font-bold"><i class="fa-solid fa-star"></i> ${u.rating}</span>
+            </div>
+
+            <p class="mt-3 text-xs text-slate-600 line-clamp-2">${u.bio}</p>
+
+            <div class="mt-3 space-y-1.5 text-xs">
+              <div>
+                <span class="text-[10px] font-bold uppercase text-brand block">Can Teach:</span>
+                <div class="flex flex-wrap gap-1 mt-0.5">
+                  ${u.skillsToTeach.map(s => `<span class="bg-brand-50 text-brand px-2 py-0.5 rounded text-[10px] font-semibold">${s}</span>`).join('')}
+                </div>
+              </div>
+              <div>
+                <span class="text-[10px] font-bold uppercase text-secondary-dark block">Wants to Learn:</span>
+                <div class="flex flex-wrap gap-1 mt-0.5">
+                  ${u.skillsToLearn.map(s => `<span class="bg-secondary-50 text-secondary-dark px-2 py-0.5 rounded text-[10px] font-semibold">${s}</span>`).join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-5 pt-3 border-t border-slate-200/60 flex items-center gap-2">
+            <button onclick="viewPeerProfile('${u.id}')" class="flex-1 py-1.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-white border border-slate-200 transition">
+              View Profile
+            </button>
+            <button onclick="openRequestModal('${u.id}')" class="flex-1 py-1.5 rounded-xl text-xs font-bold text-white bg-brand hover:bg-brand-dark transition flex items-center justify-center gap-1 shadow-xs">
+              <span>Exchange</span>
+              <span class="text-[10px] bg-white/20 px-1.5 py-0.2 rounded">10 🪙</span>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateCategoryCounts(users) {
+      const categories = ['all', 'Programming', 'Design', 'Media', 'Music', 'Dance', 'SoftSkills', 'Academics'];
+      categories.forEach(cat => {
+        const el = document.getElementById(`cat-count-${cat}`);
+        if (el) {
+          const count = cat === 'all' ? users.length : users.filter(u => u.category === cat).length;
+          el.innerText = count;
+        }
+      });
+    }
+
+    function applyExploreFilters() {
+      renderExploreGrid();
+    }
+
+    function setCategoryFilter(cat) {
+      document.getElementById('explore-category').value = cat;
+      document.querySelectorAll('.cat-pill').forEach(btn => {
+        if (btn.dataset.cat === cat) {
+          btn.className = 'cat-pill text-[11px] font-bold px-3 py-1 rounded-xl bg-brand text-white shadow-xs';
+        } else {
+          btn.className = 'cat-pill text-[11px] font-bold px-3 py-1 rounded-xl bg-white/80 border border-slate-200 text-slate-600 hover:bg-white';
+        }
+      });
+      renderExploreGrid();
+    }
+
+    function resetExploreFilters() {
+      document.getElementById('explore-search').value = '';
+      document.getElementById('explore-category').value = 'all';
+      document.getElementById('explore-level').value = 'all';
+      document.getElementById('explore-verified').checked = false;
+      setCategoryFilter('all');
+      renderExploreGrid();
+    }
+
+    /* Skill Matcher */
+    function renderSmartMatches() {
+      if (!currentUser) checkAuthSession();
+      if (!currentUser) return;
+
+      const teachTags = document.getElementById('matcher-user-teach-tags');
+      const learnTags = document.getElementById('matcher-user-learn-tags');
+      teachTags.innerHTML = currentUser.skillsToTeach.map(s => `<span class="bg-brand-50 text-brand px-2 py-0.5 rounded text-[11px] font-bold">${s}</span>`).join('');
+      learnTags.innerHTML = currentUser.skillsToLearn.map(s => `<span class="bg-secondary-50 text-secondary-dark px-2 py-0.5 rounded text-[11px] font-bold">${s}</span>`).join('');
+
+      const peers = db.getUsers().filter(u => u.id !== currentUser.id);
+      const container = document.getElementById('smart-matches-container');
+
+      const matched = peers.map(peer => ({
+        peer,
+        synergy: calculateSkillSynergy(currentUser, peer)
+      })).sort((a, b) => b.synergy.score - a.synergy.score);
+
+      container.innerHTML = matched.map(({ peer, synergy }) => `
+        <div class="glass-card rounded-3xl p-5 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div class="flex items-start gap-4 flex-1">
+            <img src="${peer.avatar}" class="w-12 h-12 rounded-2xl object-cover shrink-0 bg-white" onerror="this.onerror=null; this.src=getDefaultAvatar('${peer.name}');">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <h3 class="font-bold text-slate-900 text-sm">${peer.name}</h3>
+                <span class="text-xs text-amber-500 font-bold"><i class="fa-solid fa-star"></i> ${peer.rating}</span>
+                <span class="text-[11px] text-slate-400">• ${peer.college}</span>
+              </div>
+              <div class="text-xs text-slate-600">
+                You can teach: <strong class="text-brand">${currentUser.skillsToTeach.join(', ')}</strong> | 
+                They can teach: <strong class="text-secondary-dark">${peer.skillsToTeach.join(', ')}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between md:justify-end w-full md:w-auto gap-3 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100">
+            <span class="px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-extrabold">
+              ${synergy.score}% Skill Match
+            </span>
+            <button onclick="openRequestModal('${peer.id}')" class="px-4 py-2 bg-brand hover:bg-brand-dark text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1.5">
+              <span>Request Exchange</span>
+              <span class="text-[10px] bg-white/20 px-1.5 py-0.2 rounded">10 🪙</span>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    /* Showcase Feed */
+    function renderShowcaseFeed() {
+      const posts = db.getPosts();
+      posts.sort((a, b) => (b.boosted ? 1 : 0) - (a.boosted ? 1 : 0));
+      const container = document.getElementById('showcase-feed-container');
+
+      container.innerHTML = posts.map(post => `
+        <div class="glass-card rounded-3xl p-5 space-y-3 relative overflow-hidden ${post.boosted ? 'border-amber-300 ring-2 ring-amber-100' : ''}">
+          ${post.boosted ? `<div class="absolute top-0 right-0 bg-amber-500 text-white text-[9px] font-black uppercase px-3 py-0.5 rounded-bl-xl shadow-xs">⚡ CAMPUS BOOSTED</div>` : ''}
+
+          <div class="flex items-center justify-between pt-1">
+            <div class="flex items-center gap-3">
+              <img src="${post.userAvatar}" class="w-10 h-10 rounded-xl object-cover bg-white" onerror="this.onerror=null; this.src=getDefaultAvatar('${post.userName}');">
+              <div>
+                <h4 class="font-bold text-xs text-slate-900">${post.userName}</h4>
+                <div class="text-[10px] text-slate-400">${post.createdAt} • Skill: <strong class="text-brand">${post.skill}</strong></div>
+              </div>
+            </div>
+            <button onclick="openRequestModal('${post.userId}')" class="text-xs font-bold text-brand hover:underline">
+              Request Exchange (10 🪙)
+            </button>
+          </div>
+
+          <h3 class="font-bold text-base text-slate-900">${post.title}</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">${post.description}</p>
+
+          ${post.media ? `<div class="rounded-2xl overflow-hidden max-h-80 border border-slate-100"><img src="${post.media}" class="w-full h-full object-cover"></div>` : ''}
+
+          <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <div class="flex items-center gap-4">
+              <button onclick="likePost('${post.id}')" class="flex items-center gap-1.5 hover:text-rose-600 font-bold">
+                <i class="fa-regular fa-heart text-rose-500"></i>
+                <span>${post.likes} Likes</span>
+              </button>
+            </div>
+            <span class="text-[11px] text-slate-400">AIKYA Student Community</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function likePost(postId) {
+      const posts = db.getPosts();
+      const p = posts.find(item => item.id === postId);
+      if (p) {
+        p.likes += 1;
+        db.savePosts(posts);
+        renderShowcaseFeed();
+        showToast('Liked showcase post!');
+      }
+    }
+
+    /* Student Profile Renderer */
+    function viewPeerProfile(studentId) {
+      navigateTo('profile');
+      renderStudentProfile(studentId);
+    }
+
+    function viewMyProfile() {
+      if (!currentUser) checkAuthSession();
+      navigateTo('profile');
+      renderStudentProfile(currentUser ? currentUser.id : 'usr_ranjan');
+    }
+
+    function renderStudentProfile(studentId) {
+      const users = db.getUsers();
+      const student = users.find(u => u.id === studentId) || users[0];
+      const reviews = db.getReviews().filter(r => r.studentId === studentId);
+      const isSelf = currentUser && currentUser.id === student.id;
+      const displayAvatar = student.avatar || getDefaultAvatar(student.name);
+
+      const isSameCollege = currentUser && (currentUser.college.toLowerCase().trim() === student.college.toLowerCase().trim());
+      const campusModeBadge = isSameCollege 
+        ? `<span class="px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-emerald-600"></i> Same Campus • In-Person & Online Available</span>`
+        : `<span class="px-2.5 py-1 bg-sky-50 text-sky-800 border border-sky-200 rounded-xl text-xs font-bold flex items-center gap-1.5"><i class="fa-solid fa-globe text-sky-600"></i> Cross-Campus • AIKYA Online Video Class Available</span>`;
+
+      const container = document.getElementById('profile-card-container');
+      container.innerHTML = `
+        <div class="glass-card rounded-3xl overflow-hidden shadow-md">
+          <div class="h-28 bg-gradient-to-r from-brand to-secondary relative flex items-start p-3 sm:p-4">
+            <button onclick="goBackFromProfile()" class="sm:hidden px-2.5 py-1 rounded-lg bg-black/25 backdrop-blur-md text-white text-[11px] font-bold flex items-center gap-1.5">
+              <i class="fa-solid fa-arrow-left"></i>
+              <span>Back</span>
+            </button>
+          </div>
+          <div class="p-6 relative">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between -mt-16 gap-4 mb-6">
+              <div class="flex items-end gap-4">
+                <div class="relative group">
+                  <img src="${displayAvatar}" class="w-24 h-24 rounded-2xl object-cover ring-4 ring-white shadow-md bg-white" onerror="this.onerror=null; this.src=getDefaultAvatar('${student.name}');">
+                  ${isSelf ? `
+                    <button onclick="openEditProfileModal()" title="Change Profile Picture" class="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-brand text-white hover:bg-brand-dark flex items-center justify-center shadow-md border-2 border-white transition hover:scale-110">
+                      <i class="fa-solid fa-camera text-xs"></i>
+                    </button>
+                  ` : ''}
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h2 class="text-xl font-bold text-slate-900">${student.name}</h2>
+                    ${student.verified ? '<span class="text-xs font-bold text-secondary-dark">Verified Student ✓</span>' : ''}
+                  </div>
+                  <p class="text-xs text-slate-500">${student.college} • ${student.branch} (${student.year})</p>
+                </div>
+              </div>
+
+              ${!isSelf ? `
+                <div class="flex gap-2">
+                  <button onclick="startVideoCallDirect('${student.id}', 'Virtual Mentorship')" class="px-3.5 py-1.5 rounded-xl bg-brand-50 text-brand border border-brand-100 text-xs font-bold hover:bg-brand-100 flex items-center gap-1.5">
+                    <i class="fa-solid fa-video"></i> Video Call
+                  </button>
+                  <button onclick="startChatWithPeer('${student.id}')" class="px-3.5 py-1.5 rounded-xl border border-slate-200 text-slate-700 text-xs font-bold hover:bg-white">
+                    <i class="fa-solid fa-message mr-1 text-brand"></i> Message
+                  </button>
+                  <button onclick="openRequestModal('${student.id}')" class="px-4 py-1.5 rounded-xl bg-brand text-white text-xs font-bold hover:bg-brand-dark flex items-center gap-1 shadow-xs">
+                    <span>Learn (10 🪙)</span>
+                  </button>
+                </div>
+              ` : `
+                <div class="flex gap-2">
+                  <button onclick="openRewardsModal()" class="px-3.5 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-300 text-xs font-bold hover:bg-emerald-100">
+                    🎁 Redeem Vouchers
+                  </button>
+                  <button onclick="openEditProfileModal()" class="px-3.5 py-1.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold hover:bg-slate-200">
+                    <i class="fa-solid fa-pen mr-1"></i> Edit Profile & Photo
+                  </button>
+                </div>
+              `}
+            </div>
+
+            <div class="mb-4">${campusModeBadge}</div>
+            <p class="text-xs text-slate-600 leading-relaxed mb-4">${student.bio}</p>
+
+            <div class="flex flex-wrap gap-2 mb-6">
+              ${(student.badges || []).map(b => `<span class="px-2.5 py-1 bg-amber-50 text-amber-800 rounded-lg text-xs font-bold border border-amber-200">${b}</span>`).join('')}
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+              <div class="p-4 rounded-2xl bg-brand-50/50 border border-brand-100">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-brand block mb-2">Can Teach (Earns 10 🪙)</span>
+                <div class="flex flex-wrap gap-1">
+                  ${student.skillsToTeach.map(s => `<span class="bg-white text-brand px-2 py-0.5 rounded text-xs font-semibold shadow-xs">${s}</span>`).join('')}
+                </div>
+              </div>
+              <div class="p-4 rounded-2xl bg-secondary-50/50 border border-secondary-100">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-secondary-dark block mb-2">Wants to Learn (Transfers 10 🪙)</span>
+                <div class="flex flex-wrap gap-1">
+                  ${student.skillsToLearn.map(s => `<span class="bg-white text-secondary-dark px-2 py-0.5 rounded text-xs font-semibold shadow-xs">${s}</span>`).join('')}
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100">
+              <h3 class="font-bold text-sm text-slate-900 mb-3">Ratings & Reviews (${reviews.length})</h3>
+              <div class="space-y-2">
+                ${reviews.length === 0 ? '<p class="text-xs text-slate-400">No reviews yet for this student.</p>' : ''}
+                ${reviews.map(r => `
+                  <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs">
+                    <div class="flex justify-between font-bold text-slate-800">
+                      <span>${r.reviewerName}</span>
+                      <span class="text-amber-500">★ ${r.rating}.0</span>
+                    </div>
+                    <p class="text-slate-600 mt-1">${r.comment}</p>
+                    <span class="text-[10px] text-slate-400 block mt-1">${r.date}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+          </div>
+        </div>
+      `;
+    }
+
+    function renderDashboard() {
+      if (!currentUser) checkAuthSession();
+      if (!currentUser) return;
+
+      const setElText = (id, text) => {
+        const el = document.getElementById(id);
+        if (el) el.innerText = text;
+      };
+
+      setElText('dash-user-name', currentUser.name ? currentUser.name.split(' ')[0] : 'Student');
+      setElText('dash-stat-teaching', currentUser.skillsToTeach ? currentUser.skillsToTeach.length : 0);
+      setElText('dash-stat-learning', currentUser.skillsToLearn ? currentUser.skillsToLearn.length : 0);
+      setElText('dash-stat-credits', currentUser.credits || 0);
+
+      const allReqs = db.getRequests();
+      const active = allReqs.filter(r => (r.senderId === currentUser.id || r.receiverId === currentUser.id) && r.status === 'Accepted');
+      setElText('dash-stat-active', active.length);
+      setElText('dash-stat-rating', currentUser.rating || 5.0);
+
+      const badgesList = document.getElementById('dash-badges-list');
+      if (badgesList) {
+        badgesList.innerHTML = (currentUser.badges || []).map(b => `
+          <span class="px-2.5 py-1 bg-amber-50 text-amber-800 rounded-lg text-xs font-bold border border-amber-200">${b}</span>
+        `).join('');
+      }
+
+      renderDashboardRequests();
+      renderDashboardVouchers();
+      renderCreditLedger();
+    }
+
+    function renderDashboardVouchers() {
+      const vouchers = db.getVouchers().filter(v => v.userId === currentUser.id);
+      const container = document.getElementById('dashboard-vouchers-list');
+      if (vouchers.length === 0) {
+        container.innerHTML = `<div class="text-center py-4 text-slate-400">No vouchers redeemed yet. Earn credits by teaching peers to claim Spotify, Domains, or Gift Cards!</div>`;
+        return;
+      }
+      container.innerHTML = vouchers.map(v => `
+        <div class="p-3 rounded-2xl bg-white border border-emerald-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-xs">
+          <div class="flex items-center gap-2.5">
+            <i class="${v.icon} text-base"></i>
+            <div>
+              <h4 class="font-bold text-slate-900">${v.name}</h4>
+              <span class="text-[10px] text-slate-400">Claimed: ${v.claimedAt} • ${v.cost} Credits</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <code class="px-2 py-1 bg-slate-100 text-slate-800 font-mono font-bold text-xs rounded border border-slate-200">${v.code}</code>
+            <button onclick="copyVoucherCode('${v.code}')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg transition shadow-xs">
+              Copy Key
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderCreditLedger() {
+      if (!currentUser) return;
+      const container = document.getElementById('dashboard-credits-ledger');
+      if (!container) return;
+      const logs = db.getCreditLogs().filter(l => l.userId === currentUser.id);
+
+      if (logs.length === 0) {
+        container.innerHTML = `<div class="text-center py-4 text-slate-400">No credit transactions recorded yet.</div>`;
+        return;
+      }
+
+      container.innerHTML = logs.map(log => `
+        <div class="pt-2 pb-1 flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <span class="w-6 h-6 rounded-lg ${log.type === 'credit' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'} flex items-center justify-center text-xs font-bold">
+              ${log.type === 'credit' ? '↓' : '↑'}
+            </span>
+            <div>
+              <div class="font-bold text-slate-800">${log.title}</div>
+              <div class="text-[10px] text-slate-400">${log.date}</div>
+            </div>
+          </div>
+          <span class="font-black text-xs ${log.type === 'credit' ? 'text-emerald-600' : 'text-rose-600'}">
+            ${log.amount}
+          </span>
+        </div>
+      `).join('');
+    }
+
+    function switchRequestTab(tab) {
+      currentRequestTab = tab;
+      const rec = document.getElementById('req-tab-received');
+      const sent = document.getElementById('req-tab-sent');
+      if (tab === 'received') {
+        rec.className = 'px-3 py-1 rounded-lg bg-white shadow-xs text-slate-800 font-bold';
+        sent.className = 'px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 font-bold';
+      } else {
+        sent.className = 'px-3 py-1 rounded-lg bg-white shadow-xs text-slate-800 font-bold';
+        rec.className = 'px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 font-bold';
+      }
+      renderDashboardRequests();
+    }
+
+    function renderDashboardRequests() {
+      if (!currentUser) return;
+      const all = db.getRequests();
+      const received = all.filter(r => r.receiverId === currentUser.id);
+      const sent = all.filter(r => r.senderId === currentUser.id);
+
+      document.getElementById('count-received').innerText = received.length;
+      document.getElementById('count-sent').innerText = sent.length;
+
+      const list = currentRequestTab === 'received' ? received : sent;
+      const container = document.getElementById('dashboard-requests-list');
+
+      if (list.length === 0) {
+        container.innerHTML = `<div class="text-center py-8 text-xs text-slate-400">No ${currentRequestTab} requests.</div>`;
+        return;
+      }
+
+      container.innerHTML = list.map(req => {
+        const isRec = currentRequestTab === 'received';
+        const partnerName = isRec ? req.senderName : req.receiverName;
+        const partnerId = isRec ? req.senderId : req.receiverId;
+        const partnerAvatar = isRec ? req.senderAvatar : getDefaultAvatar(partnerName);
+
+        return `
+          <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
+            <div class="flex items-start justify-between">
+              <div class="flex items-center gap-2.5">
+                <img src="${partnerAvatar}" class="w-9 h-9 rounded-xl object-cover bg-white" onerror="this.onerror=null; this.src=getDefaultAvatar('${partnerName}');">
+                <div>
+                  <h4 class="font-bold text-slate-900">${partnerName}</h4>
+                  <div class="text-[10px] text-slate-400">${req.createdAt} • Match: <strong class="text-brand">${req.matchPercentage}%</strong></div>
+                </div>
+              </div>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${req.status === 'Accepted' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'}">
+                ${req.status}
+              </span>
+            </div>
+
+            <p class="text-slate-600 italic bg-white p-2.5 rounded-xl border border-slate-100">
+              "${req.message}"
+            </p>
+
+            <div class="flex items-center justify-between pt-1 flex-wrap gap-2">
+              <span class="text-slate-500">
+                Offer: <strong class="text-secondary-dark">${req.offeredSkill}</strong> ⇄ Learn: <strong class="text-brand">${req.requestedSkill}</strong>
+              </span>
+
+              <div class="flex items-center gap-1.5">
+                ${req.status === 'Accepted' ? `
+                  <button onclick="launchVideoCallForExchange('${req.id}', '${partnerId}', '${req.requestedSkill}')" class="px-3 py-1 bg-brand text-white rounded-lg font-bold flex items-center gap-1 shadow-xs hover:bg-brand-dark">
+                    <i class="fa-solid fa-video text-[10px]"></i>
+                    <span>Join Class</span>
+                  </button>
+                  <button onclick="startChatWithPeer('${partnerId}')" class="px-2.5 py-1 bg-white border border-slate-200 text-slate-700 rounded-lg font-bold">Chat</button>
+                  <button onclick="markExchangeCompleted('${req.id}', '${partnerId}')" class="px-2.5 py-1 bg-emerald-600 text-white rounded-lg font-bold">Complete (+10 🪙)</button>
+                ` : ''}
+
+                ${isRec && req.status === 'Pending' ? `
+                  <button onclick="updateRequestStatus('${req.id}', 'Accepted')" class="px-2.5 py-1 bg-emerald-600 text-white rounded-lg font-bold">Accept</button>
+                  <button onclick="updateRequestStatus('${req.id}', 'Rejected')" class="px-2.5 py-1 bg-slate-200 text-slate-700 rounded-lg font-bold">Decline</button>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateRequestStatus(reqId, status) {
+      const reqs = db.getRequests();
+      const r = reqs.find(item => item.id === reqId);
+      if (r) {
+        r.status = status;
+        db.saveRequests(reqs);
+        showToast(`Request updated to ${status}`);
+        renderDashboard();
+      }
+    }
+
+    function markExchangeCompleted(reqId, studentId) {
+      const reqs = db.getRequests();
+      const r = reqs.find(item => item.id === reqId);
+      if (r) {
+        r.status = 'Completed';
+        db.saveRequests(reqs);
+      }
+      openReviewModal(reqId, studentId);
+    }
+
+    function renderMessagesView() {
+      if (!currentUser) checkAuthSession();
+      const users = db.getUsers().filter(u => u.id !== currentUser?.id);
+      const threadsContainer = document.getElementById('chat-threads-container');
+      const threadsCount = document.getElementById('chat-threads-count');
+      if (threadsCount) threadsCount.innerText = `${users.length} Peers`;
+
+      threadsContainer.innerHTML = users.map(u => {
+        const isActive = u.id === activeChatPartnerId;
+        return `
+          <div onclick="selectChatPartner('${u.id}')" class="p-3 flex items-center gap-2.5 cursor-pointer hover:bg-white transition ${isActive ? 'bg-white border-l-4 border-brand' : ''}">
+            <img src="${u.avatar}" class="w-8 h-8 rounded-lg object-cover bg-white" onerror="this.onerror=null; this.src=getDefaultAvatar('${u.name}');">
+            <div class="min-w-0 flex-1">
+              <h4 class="font-bold text-xs text-slate-900 truncate">${u.name}</h4>
+              <p class="text-[10px] text-slate-500 truncate">${u.college}</p>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const emptyState = document.getElementById('chat-empty-state');
+      const activeWindow = document.getElementById('chat-active-window');
+      const sidebar = document.getElementById('chat-sidebar');
+      const mainContainer = document.getElementById('chat-main-container');
+
+      if (!activeChatPartnerId) {
+        if (emptyState) { emptyState.classList.remove('hidden'); emptyState.classList.add('flex'); }
+        if (activeWindow) { activeWindow.classList.add('hidden'); activeWindow.classList.remove('flex'); }
+        if (sidebar) { sidebar.classList.remove('hidden'); sidebar.classList.add('flex'); }
+        if (mainContainer) { mainContainer.classList.add('hidden', 'md:flex'); mainContainer.classList.remove('flex'); }
+        return;
+      }
+
+      if (emptyState) { emptyState.classList.add('hidden'); emptyState.classList.remove('flex'); }
+      if (activeWindow) { activeWindow.classList.remove('hidden'); activeWindow.classList.add('flex'); }
+      if (sidebar) { sidebar.classList.add('hidden', 'md:flex'); sidebar.classList.remove('flex'); }
+      if (mainContainer) { mainContainer.classList.remove('hidden'); mainContainer.classList.add('flex'); }
+
+      const partner = users.find(u => u.id === activeChatPartnerId);
+      if (partner) {
+        document.getElementById('chat-header-img').src = partner.avatar;
+        document.getElementById('chat-header-name').innerText = partner.name;
+        renderMessagesStream();
+      }
+    }
+
+    function selectChatPartner(uid) {
+      activeChatPartnerId = uid;
+      renderMessagesView();
+    }
+
+    function deselectChatPartner() {
+      activeChatPartnerId = null;
+      renderMessagesView();
+    }
+
+    function startChatWithPeer(uid) {
+      activeChatPartnerId = uid;
+      navigateTo('messages');
+    }
+
+    function renderMessagesStream() {
+      if (!currentUser || !activeChatPartnerId) return;
+      const msgs = db.getMessages();
+      const thread = msgs.filter(m => 
+        (m.senderId === currentUser.id && m.receiverId === activeChatPartnerId) ||
+        (m.senderId === activeChatPartnerId && m.receiverId === currentUser.id)
+      );
+
+      const stream = document.getElementById('chat-messages-stream');
+      if (thread.length === 0) {
+        stream.innerHTML = '<div class="text-center py-12 text-slate-400 text-xs">No messages yet. Say hello to your peer!</div>';
+        return;
+      }
+
+      stream.innerHTML = thread.map(m => {
+        const isMe = m.senderId === currentUser.id;
+        return `
+          <div class="flex ${isMe ? 'justify-end' : 'justify-start'}">
+            <div class="max-w-xs px-3.5 py-2 rounded-2xl text-xs ${isMe ? 'bg-brand text-white rounded-br-none' : 'bg-white text-slate-800 rounded-bl-none border border-slate-200'}">
+              <p>${m.message}</p>
+              <span class="text-[9px] block mt-1 ${isMe ? 'text-brand-100 text-right' : 'text-slate-400'}">${m.timestamp}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      stream.scrollTop = stream.scrollHeight;
+    }
+
+    function handleSendChatMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chat-input-text');
+      const text = input.value.trim();
+      if (!text || !currentUser || !activeChatPartnerId) return;
+
+      const msgs = db.getMessages();
+      msgs.push({
+        id: 'msg_' + Date.now(),
+        senderId: currentUser.id,
+        receiverId: activeChatPartnerId,
+        message: text,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+
+      db.saveMessages(msgs);
+      input.value = '';
+      renderMessagesStream();
+
+      const ind = document.getElementById('chat-typing-indicator');
+      ind.classList.remove('hidden');
+
+      setTimeout(() => {
+        ind.classList.add('hidden');
+        const replies = [
+          "Awesome! I am free to meet for the skill session.",
+          "Great question! We can also jump on the video call to code live.",
+          "Got it, looking forward to exchanging skills!"
+        ];
+        msgs.push({
+          id: 'msg_' + (Date.now() + 1),
+          senderId: activeChatPartnerId,
+          receiverId: currentUser.id,
+          message: replies[Math.floor(Math.random() * replies.length)],
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        });
+        db.saveMessages(msgs);
+        renderMessagesStream();
+      }, 1000);
+    }
+
+    function filterChatPartners() {
+      const q = document.getElementById('chat-search-input').value.toLowerCase();
+      document.querySelectorAll('#chat-threads-container > div').forEach(el => {
+        el.style.display = el.innerText.toLowerCase().includes(q) ? 'flex' : 'none';
+      });
+    }
+
+    function requestExchangeWithActiveChatUser() {
+      if (activeChatPartnerId) openRequestModal(activeChatPartnerId);
+    }
+
+    /* Admin View */
+    function renderAdminView() {
+      const users = db.getUsers();
+      document.getElementById('admin-student-count').innerText = users.length;
+      const tbody = document.getElementById('admin-students-table-body');
+
+      tbody.innerHTML = users.map(u => `
+        <tr class="hover:bg-slate-50">
+          <td class="py-2.5 px-4 flex items-center gap-2">
+            <img src="${u.avatar}" class="w-7 h-7 rounded-md object-cover bg-white" onerror="this.onerror=null; this.src=getDefaultAvatar('${u.name}');">
+            <div>
+              <div class="font-bold text-slate-900">${u.name}</div>
+              <div class="text-[10px] text-slate-400">${u.email}</div>
+            </div>
+          </td>
+          <td class="py-2.5 px-4">${u.college}</td>
+          <td class="py-2.5 px-4 font-bold text-amber-700">🪙 ${u.credits || 0}</td>
+          <td class="py-2.5 px-4">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${u.verified ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'}">
+              ${u.verified ? 'Verified ✓' : 'Unverified'}
+            </span>
+          </td>
+          <td class="py-2.5 px-4 text-right space-x-1">
+            <button onclick="grantAdminBonusCredits('${u.id}', 10)" class="px-2 py-1 rounded text-[10px] font-bold bg-amber-50 text-amber-800 hover:bg-amber-100">
+              +10 🪙
+            </button>
+            <button onclick="toggleVerifyStudent('${u.id}')" class="px-2 py-1 rounded text-xs font-bold ${u.verified ? 'bg-amber-50 text-amber-700' : 'bg-emerald-600 text-white'}">
+              ${u.verified ? 'Revoke' : 'Verify'}
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function grantAdminBonusCredits(uid, amount) {
+      const users = db.getUsers();
+      const u = users.find(item => item.id === uid);
+      if (u) {
+        u.credits = (u.credits || 0) + amount;
+        recordCreditTransaction(u.id, 'Admin Bonus Credit Award', amount, 'credit');
+        db.saveUsers(users);
+        if (currentUser && currentUser.id === uid) {
+          currentUser = u;
+          checkAuthSession();
+        }
+        showToast(`Granted ${amount} Credits to ${u.name}!`, 'success');
+        renderAdminView();
+      }
+    }
+
+    function toggleVerifyStudent(uid) {
+      const users = db.getUsers();
+      const u = users.find(item => item.id === uid);
+      if (u) {
+        u.verified = !u.verified;
+        db.saveUsers(users);
+        showToast(`${u.name} verification status toggled.`);
+        renderAdminView();
+        if (currentUser && currentUser.id === uid) checkAuthSession();
+      }
+    }
+
+    /* Modal Proposal Handler */
+    function openRequestModal(targetUserId) {
+      if (!currentUser) {
+        openAuthModal('login');
+        return;
+      }
+      const users = db.getUsers();
+      const target = users.find(u => u.id === targetUserId);
+      if (!target) return;
+
+      document.getElementById('req-target-user-id').value = target.id;
+      document.getElementById('req-modal-avatar').src = target.avatar;
+      document.getElementById('req-modal-target-name').innerText = target.name;
+      document.getElementById('req-modal-college').innerText = target.college;
+      document.getElementById('req-modal-credit-balance').innerText = currentUser.credits || 0;
+
+      const isSameCollege = currentUser.college.toLowerCase().trim() === target.college.toLowerCase().trim();
+      const badge = document.getElementById('req-modal-campus-badge');
+      if (badge) {
+        badge.className = isSameCollege 
+          ? 'text-[10px] font-extrabold px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-200'
+          : 'text-[10px] font-extrabold px-2.5 py-1 rounded-lg bg-sky-100 text-sky-800 border border-sky-200';
+        badge.innerText = isSameCollege ? 'Same Campus (📍 Offline / Online)' : 'Cross Campus (🌐 Virtual)';
+      }
+
+      const offerSelect = document.getElementById('req-offered-skill');
+      offerSelect.innerHTML = (currentUser.skillsToTeach || ['Python']).map(s => `<option value="${s}">${s}</option>`).join('');
+
+      const reqSelect = document.getElementById('req-requested-skill');
+      reqSelect.innerHTML = (target.skillsToTeach || ['Graphic Design']).map(s => `<option value="${s}">${s}</option>`).join('');
+
+      document.getElementById('modal-request').classList.remove('hidden');
+    }
+
+    function closeRequestModal() {
+      document.getElementById('modal-request').classList.add('hidden');
+    }
+
+    function handleSendExchangeSubmit(e) {
+      e.preventDefault();
+      const learningFee = 10;
+      if ((currentUser.credits || 0) < learningFee) {
+        showToast(`⚠️ You need ${learningFee} 🪙 to book peer learning. Please top-up.`, 'amber');
+        closeRequestModal();
+        openPlansModal();
+        return;
+      }
+
+      const targetId = document.getElementById('req-target-user-id').value;
+      const offeredSkill = document.getElementById('req-offered-skill').value;
+      const requestedSkill = document.getElementById('req-requested-skill').value;
+      const message = document.getElementById('req-message').value.trim();
+      const exchangeMode = document.querySelector('input[name="exchange-mode"]:checked')?.value || 'Offline';
+
+      const users = db.getUsers();
+      const target = users.find(u => u.id === targetId);
+
+      const requests = db.getRequests();
+      requests.unshift({
+        id: 'req_' + Date.now(),
+        senderId: currentUser.id,
+        senderName: currentUser.name,
+        senderAvatar: currentUser.avatar,
+        receiverId: target.id,
+        receiverName: target.name,
+        offeredSkill,
+        requestedSkill,
+        message,
+        exchangeMode,
+        creditFee: learningFee,
+        matchPercentage: 95,
+        status: 'Pending',
+        createdAt: 'Just now'
+      });
+
+      db.saveRequests(requests);
+      closeRequestModal();
+      showToast(`Skill proposal sent! 10 credits held for exchange. 🎉`, 'success');
+      if (currentActiveView === 'dashboard') renderDashboard();
+    }
+
+    function openReviewModal(exchangeId, studentId) {
+      document.getElementById('review-exchange-id').value = exchangeId;
+      document.getElementById('review-student-id').value = studentId;
+      document.getElementById('modal-review').classList.remove('hidden');
+      setRatingValue(5);
+    }
+
+    function closeReviewModal() {
+      document.getElementById('modal-review').classList.add('hidden');
+    }
+
+    function setRatingValue(val) {
+      document.getElementById('selected-rating-value').value = val;
+      document.querySelectorAll('.star-btn').forEach((b, i) => {
+        b.className = i < val ? 'star-btn text-amber-400' : 'star-btn text-slate-300';
+      });
+    }
+
+    function handleReviewSubmit(e) {
+      e.preventDefault();
+      const targetId = document.getElementById('review-student-id').value;
+      const rating = parseInt(document.getElementById('selected-rating-value').value, 10);
+      const comment = document.getElementById('review-comment').value.trim();
+
+      const reviews = db.getReviews();
+      reviews.unshift({
+        id: 'rev_' + Date.now(),
+        reviewerId: currentUser.id,
+        studentId: targetId,
+        reviewerName: currentUser ? currentUser.name : 'Student',
+        rating,
+        comment,
+        date: 'Just now'
+      });
+      db.saveReviews(reviews);
+
+      const users = db.getUsers();
+      const student = users.find(u => u.id === targetId);
+      if (student) {
+        student.reviewsCount = (student.reviewsCount || 0) + 1;
+        student.exchangesCompleted = (student.exchangesCompleted || 0) + 1;
+        student.credits = (student.credits || 0) + 10;
+        recordCreditTransaction(student.id, 'Received 10 Credits for Completed Exchange', 10, 'credit');
+        db.saveUsers(users);
+      }
+
+      closeReviewModal();
+      showToast('Rating recorded & 10 Credits released to mentor! ⭐', 'success');
+      if (currentActiveView === 'dashboard') renderDashboard();
+    }
+
+    /* Profile Editing & Picture Upload */
+    function openEditProfileModal() {
+      if (!currentUser) checkAuthSession();
+      document.getElementById('edit-name').value = currentUser.name;
+      document.getElementById('edit-college').value = currentUser.college;
+      document.getElementById('edit-branch').value = currentUser.branch;
+      document.getElementById('edit-bio').value = currentUser.bio;
+      document.getElementById('edit-teach-skills').value = (currentUser.skillsToTeach || []).join(', ');
+      document.getElementById('edit-learn-skills').value = (currentUser.skillsToLearn || []).join(', ');
+      
+      const av = currentUser.avatar || getDefaultAvatar(currentUser.name);
+      document.getElementById('edit-avatar-preview').src = av;
+      document.getElementById('edit-avatar-data').value = av;
+      document.getElementById('modal-edit-profile').classList.remove('hidden');
+    }
+
+    function closeEditProfileModal() {
+      document.getElementById('modal-edit-profile').classList.add('hidden');
+    }
+
+    function resetAvatarToDefault() {
+      const name = document.getElementById('edit-name').value.trim() || 'Student';
+      const def = getDefaultAvatar(name);
+      document.getElementById('edit-avatar-preview').src = def;
+      document.getElementById('edit-avatar-data').value = def;
+      document.getElementById('edit-avatar-url-input').value = '';
+      showToast('Switched to default initials picture.', 'info');
+    }
+
+    function handleAvatarUrlInput(url) {
+      if (url && url.trim()) {
+        document.getElementById('edit-avatar-preview').src = url.trim();
+        document.getElementById('edit-avatar-data').value = url.trim();
+      }
+    }
+
+    function handleAvatarFileChange(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        document.getElementById('edit-avatar-preview').src = evt.target.result;
+        document.getElementById('edit-avatar-data').value = evt.target.result;
+        showToast('Local photo loaded! Click "Save Changes" to apply.', 'info');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleSaveProfile(e) {
+      e.preventDefault();
+      if (!currentUser) return;
+      const users = db.getUsers();
+      const u = users.find(item => item.id === currentUser.id);
+      if (u) {
+        u.name = document.getElementById('edit-name').value.trim();
+        u.college = document.getElementById('edit-college').value.trim();
+        u.branch = document.getElementById('edit-branch').value.trim();
+        u.bio = document.getElementById('edit-bio').value.trim();
+        u.skillsToTeach = document.getElementById('edit-teach-skills').value.split(',').map(s => s.trim()).filter(Boolean);
+        u.skillsToLearn = document.getElementById('edit-learn-skills').value.split(',').map(s => s.trim()).filter(Boolean);
+        u.avatar = document.getElementById('edit-avatar-data').value || getDefaultAvatar(u.name);
+
+        db.saveUsers(users);
+        currentUser = u;
+        checkAuthSession();
+        closeEditProfileModal();
+        showToast('Profile and photo updated! 🎉', 'success');
+        if (currentActiveView === 'dashboard') renderDashboard();
+        if (currentActiveView === 'profile') renderStudentProfile(currentUser.id);
+      }
+    }
+
+    function openCreatePostModal() {
+      if (!currentUser) { openAuthModal('login'); return; }
+      document.getElementById('modal-create-post').classList.remove('hidden');
+    }
+
+    function closeCreatePostModal() {
+      document.getElementById('modal-create-post').classList.add('hidden');
+    }
+
+    function handleCreatePostSubmit(e) {
+      e.preventDefault();
+      const title = document.getElementById('post-title').value.trim();
+      const skill = document.getElementById('post-skill').value.trim();
+      const description = document.getElementById('post-desc').value.trim();
+      const media = document.getElementById('post-media').value.trim();
+
+      const posts = db.getPosts();
+      posts.unshift({
+        id: 'post_' + Date.now(),
+        userId: currentUser.id,
+        userName: currentUser.name,
+        userAvatar: currentUser.avatar,
+        skill,
+        title,
+        description,
+        media,
+        likes: 0,
+        boosted: false,
+        createdAt: 'Just now'
+      });
+
+      db.savePosts(posts);
+      closeCreatePostModal();
+      showToast('Showcase published to campus feed!');
+      renderShowcaseFeed();
+    }
+
+    /* Counter animation */
+    function initStatsCounters() {
+      const el = document.getElementById('stats-section');
+      if (!el) return;
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            document.querySelectorAll('[data-target-num]').forEach(counter => {
+              const target = parseInt(counter.getAttribute('data-target-num'), 10);
+              let count = 0;
+              const step = Math.ceil(target / 30);
+              const timer = setInterval(() => {
+                count += step;
+                if (count >= target) {
+                  counter.innerText = target.toLocaleString() + (target === 95 ? '%' : '+');
+                  clearInterval(timer);
+                } else {
+                  counter.innerText = count.toLocaleString();
+                }
+              }, 30);
+            });
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.2 });
+      observer.observe(el);
+    }
+
+    /* Local FastAPI/SQLite bridge. Existing UI reads synchronously from a cache;
+       writes are mirrored to the SQLite-backed API while a server session is active. */
+    const AIKYA_SERVER_KEYS = [
+      DB_KEYS.USERS, DB_KEYS.POSTS, DB_KEYS.REQUESTS, DB_KEYS.REVIEWS,
+      DB_KEYS.MESSAGES, DB_KEYS.CREDIT_LOGS, DB_KEYS.VOUCHERS, 'aikya_ver'
+    ];
+    let aikyaBackendReady = false;
+    let aikyaHydrating = false;
+    let aikyaAuthenticated = false;
+    const aikyaPendingWrites = new Map();
+    const aikyaOriginalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function(key, value) {
+      aikyaOriginalSetItem.call(this, key, value);
+      if (this !== window.localStorage || !aikyaBackendReady || aikyaHydrating || !aikyaAuthenticated || !AIKYA_SERVER_KEYS.includes(String(key))) return;
+      aikyaPendingWrites.set(String(key), String(value));
+      clearTimeout(window.__aikyaWriteTimer);
+      window.__aikyaWriteTimer = setTimeout(async () => {
+        const pending = Array.from(aikyaPendingWrites.entries());
+        aikyaPendingWrites.clear();
+        for (const [stateKey, rawValue] of pending) {
+          try {
+            const valueToSave = JSON.parse(rawValue);
+            await fetch('/api/state/' + encodeURIComponent(stateKey), {
+              method: 'PUT', credentials: 'same-origin',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ value: valueToSave })
+            });
+          } catch (err) { console.error('AIKYA local database sync failed:', stateKey, err); }
+        }
+      }, 180);
+    };
+
+    function clearPrivateLocalCache() {
+      [DB_KEYS.REQUESTS, DB_KEYS.MESSAGES, DB_KEYS.CREDIT_LOGS, DB_KEYS.VOUCHERS].forEach(key => {
+        try { localStorage.removeItem(key); } catch (_) {}
+      });
+    }
+
+    async function hydrateBackendState(full = false) {
+      aikyaHydrating = true;
+      try {
+        const response = await fetch('/api/bootstrap', { credentials: 'same-origin', cache: 'no-store' });
+        if (!response.ok) throw new Error('Backend data could not be loaded.');
+        const payload = await response.json();
+        const state = payload.state || {};
+        for (const key of AIKYA_SERVER_KEYS) {
+          if (Object.prototype.hasOwnProperty.call(state, key)) {
+            let value = state[key];
+            if (key === DB_KEYS.USERS && Array.isArray(value)) {
+              value = value.map(({ password, password_hash, password_salt, ...safeUser }) => safeUser);
+            }
+            aikyaOriginalSetItem.call(localStorage, key, typeof value === 'string' ? value : JSON.stringify(value));
+          } else if (full) {
+            // Keep an empty collection for server-owned data that has no records yet.
+            if ([DB_KEYS.REQUESTS, DB_KEYS.REVIEWS, DB_KEYS.MESSAGES, DB_KEYS.CREDIT_LOGS, DB_KEYS.VOUCHERS].includes(key)) {
+              aikyaOriginalSetItem.call(localStorage, key, '[]');
+            }
+          }
+        }
+        return payload;
+      } finally {
+        aikyaHydrating = false;
+      }
+    }
+
+    async function seedBackendIfNeeded() {
+      const state = {};
+      for (const key of AIKYA_SERVER_KEYS) {
+        const raw = localStorage.getItem(key);
+        if (raw !== null) {
+          try { state[key] = JSON.parse(raw); } catch (_) { state[key] = raw; }
+        }
+      }
+      if (Array.isArray(state[DB_KEYS.USERS])) {
+        state[DB_KEYS.USERS] = state[DB_KEYS.USERS].map(({ password, password_hash, password_salt, ...safeUser }) => safeUser);
+      }
+      await fetch('/api/seed', {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ state })
+      });
+    }
+
+    window.onload = async function() {
+      try {
+        initializeDatabase();
+        await hydrateBackendState(false);
+        let session = null;
+        try {
+          const meResponse = await fetch('/api/auth/me', { credentials: 'same-origin', cache: 'no-store' });
+          if (meResponse.ok) session = await meResponse.json();
+        } catch (_) {}
+        if (session && session.user) {
+          aikyaAuthenticated = true;
+          await hydrateBackendState(true);
+          const user = session.user;
+          const users = db.getUsers();
+          if (!users.some(u => u.id === user.id)) users.push(user);
+          else {
+            const idx = users.findIndex(u => u.id === user.id);
+            users[idx] = { ...users[idx], ...user };
+          }
+          db.saveUsers(users);
+          db.setCurrentUserId(user.id);
+          db.setAuthToken('server-session');
+        } else {
+          aikyaAuthenticated = false;
+          db.clearAuth();
+          clearPrivateLocalCache();
+        }
+        aikyaBackendReady = true;
+        checkAuthSession();
+        initStatsCounters();
+      } catch (err) {
+        console.error(err);
+        showToast('AIKYA could not connect to the server. Please try again later.', 'error');
+        initializeDatabase();
+        checkAuthSession();
+        initStatsCounters();
+      }
+    };
+  </script>
+</body>
+</html>
